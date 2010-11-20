@@ -42,8 +42,8 @@ class Scent:
             return value + (more - initial)
         self._next = self._next + self._pheromoneKind.diffusion * reduce(add, squareValues, 0)
 
-    def moreScent(self, value):
-        self._next = self._next + value
+    def fixScent(self, pheromone):
+        self._next = pheromone.fixScent(self._next)
 
     def commitDiffusion(self):
         self.value = self._next
@@ -89,7 +89,7 @@ class Cell:
             scent.diffuseScent(square)
         for obj in self._objects:
             for pheromone in obj.pheromones:
-                self._scents[pheromone.kind].moreScent(pheromone.value)
+                self._scents[pheromone.kind].fixScent(pheromone)
 
     def commitDiffusion(self):
         for scent in self._scents.values():
