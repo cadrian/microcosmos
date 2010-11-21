@@ -1,0 +1,4 @@
+background = background(theme="menuBackground")
+start      = button(text="Choose game", position=(100, 40))
+scores     = button(text="Scores", position=(100, 80))
+quit       = button(text="Quit", position=(100, 440))
