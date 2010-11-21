@@ -13,6 +13,9 @@ class Target(LocatedObject):
         self.pheromone = Pheromone(TARGET_PHEROMONE_KIND, 16)
         self.pheromones = [self.pheromone]
 
+    def allowTogether(self, other):
+        return other == self._ant
+
 
 class Randomizer:
     def accept(self):
@@ -28,7 +31,13 @@ class Exploration:
         return "exploration"
 
     def move(self):
-        self._ant.moveTo(self._ant.x - 1, self._ant.y + 1)
+        square = self._ant.grid.square(self._ant.x, self._ant.y)
+        x, y = random.choice(square)
+        while not self._ant.grid.allowMove(x, y, self._ant) and len(square) > 0:
+            square.remove((x, y))
+            x, y = random.choice(square)
+        if len(square) > 0:
+            self._ant.moveTo(x, y)
 
 
 class FollowingTarget:
@@ -101,3 +110,6 @@ class AntFemale(LocatedObject):
 
     def isDead(self):
         return self.state.dead
+
+    def allowTogether(self, other):
+        return other == self.target
