@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+echo
+exec find . -name 'test*.py' \
+    -exec echo "======================================================================" \; \
+    -exec echo "Now running " {} \; \
+    -exec echo \; \
+    -exec python {} \; \
+    -exec echo \;
