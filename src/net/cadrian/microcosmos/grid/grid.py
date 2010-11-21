@@ -71,9 +71,11 @@ class Cell:
         self._objects.add(obj)
         for pheromone in obj.pheromones:
             self._ensurePheromone(pheromone.kind)
+        obj.onGridPut(self.x, self.y)
 
     def remove(self, obj):
         self._objects.remove(obj)
+        obj.onGridRemove(self.x, self.y)
 
     def _ensurePheromone(self, pheromoneKind):
         if not self._scents.has_key(pheromoneKind):
@@ -130,6 +132,9 @@ class Grid:
             self.cell(x, y).commitDiffusion()
         map(begin , coordinates(self.width, self.height))
         map(commit, coordinates(self.width, self.height))
+
+    def square(self, x, y):
+        return [(x+dx, y+dy) for dx, dy in square()]
 
     def scent(self, x, y, pheromoneKind):
         return self.cell(x, y).scent(pheromoneKind)

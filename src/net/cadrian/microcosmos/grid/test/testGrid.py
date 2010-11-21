@@ -1,6 +1,6 @@
 import unittest
 
-from net.cadrian.microcosmos.grid import Grid
+from net.cadrian.microcosmos.grid import Grid, LocatedObject
 
 
 class PheromoneKind:
@@ -28,21 +28,24 @@ class AntiPheromone:
         return self._diffusion * value
 
 
-class Bug:
+class Bug(LocatedObject):
     """ Bugs diffuse pheromones """
-    def __init__(self, pheromoneKind, pheromoneValue):
+    def __init__(self, grid, pheromoneKind, pheromoneValue):
+        LocatedObject.__init__(self, grid)
         self.pheromones = [Pheromone(kind=pheromoneKind, value=pheromoneValue)]
 
 
-class Wall:
+class Wall(LocatedObject):
     """ Walls block pheromones """
-    def __init__(self, pheromoneKind):
+    def __init__(self, grid, pheromoneKind):
+        LocatedObject.__init__(self, grid)
         self.pheromones = [AntiPheromone(kind=pheromoneKind, diffusion=0)]
 
 
-class Pond:
+class Pond(LocatedObject):
     """ Ponds slow the pheromones diffusion """
-    def __init__(self, pheromoneKind):
+    def __init__(self, grid, pheromoneKind):
+        LocatedObject.__init__(self, grid)
         self.pheromones = [AntiPheromone(kind=pheromoneKind, diffusion=0.25)]
 
 
@@ -51,7 +54,7 @@ class DiffusionTestCase(unittest.TestCase):
         """ one bug """
 
         grid = Grid(5, 5)
-        bug = Bug(pheromoneKind=PHEROMONE, pheromoneValue=4)
+        bug = Bug(grid, pheromoneKind=PHEROMONE, pheromoneValue=4)
         grid.put(2, 2, bug)
 
         grid.diffuse()
@@ -72,8 +75,8 @@ class DiffusionTestCase(unittest.TestCase):
         """ two bugs with the same scent """
 
         grid = Grid(5, 5)
-        bug1 = Bug(pheromoneKind=PHEROMONE, pheromoneValue=4)
-        bug2 = Bug(pheromoneKind=PHEROMONE, pheromoneValue=2)
+        bug1 = Bug(grid, pheromoneKind=PHEROMONE, pheromoneValue=4)
+        bug2 = Bug(grid, pheromoneKind=PHEROMONE, pheromoneValue=2)
         grid.put(2, 2, bug1)
         grid.put(1, 1, bug2)
 
@@ -93,7 +96,7 @@ class DiffusionTestCase(unittest.TestCase):
         """ one moving bug """
 
         grid = Grid(5, 5)
-        bug = Bug(pheromoneKind=PHEROMONE, pheromoneValue=4)
+        bug = Bug(grid, pheromoneKind=PHEROMONE, pheromoneValue=4)
 
         grid.put(2, 2, bug)
         grid.diffuse()
@@ -121,12 +124,12 @@ class DiffusionTestCase(unittest.TestCase):
         """ one bug, one wall """
 
         grid = Grid(5, 5)
-        bug = Bug(pheromoneKind=PHEROMONE, pheromoneValue=4)
-        wall1 = Wall(pheromoneKind=PHEROMONE)
-        wall2 = Wall(pheromoneKind=PHEROMONE)
-        wall3 = Wall(pheromoneKind=PHEROMONE)
-        wall4 = Wall(pheromoneKind=PHEROMONE)
-        wall5 = Wall(pheromoneKind=PHEROMONE)
+        bug = Bug(grid, pheromoneKind=PHEROMONE, pheromoneValue=4)
+        wall1 = Wall(grid, pheromoneKind=PHEROMONE)
+        wall2 = Wall(grid, pheromoneKind=PHEROMONE)
+        wall3 = Wall(grid, pheromoneKind=PHEROMONE)
+        wall4 = Wall(grid, pheromoneKind=PHEROMONE)
+        wall5 = Wall(grid, pheromoneKind=PHEROMONE)
 
         grid.put(2, 2, bug)
         grid.put(1, 0, wall1)
@@ -161,12 +164,12 @@ class DiffusionTestCase(unittest.TestCase):
         """ one bug, one pond """
 
         grid = Grid(5, 5)
-        bug = Bug(pheromoneKind=PHEROMONE, pheromoneValue=4)
-        pond1 = Pond(pheromoneKind=PHEROMONE)
-        pond2 = Pond(pheromoneKind=PHEROMONE)
-        pond3 = Pond(pheromoneKind=PHEROMONE)
-        pond4 = Pond(pheromoneKind=PHEROMONE)
-        pond5 = Pond(pheromoneKind=PHEROMONE)
+        bug = Bug(grid, pheromoneKind=PHEROMONE, pheromoneValue=4)
+        pond1 = Pond(grid, pheromoneKind=PHEROMONE)
+        pond2 = Pond(grid, pheromoneKind=PHEROMONE)
+        pond3 = Pond(grid, pheromoneKind=PHEROMONE)
+        pond4 = Pond(grid, pheromoneKind=PHEROMONE)
+        pond5 = Pond(grid, pheromoneKind=PHEROMONE)
 
         grid.put(2, 2, bug)
         grid.put(1, 0, pond1)
@@ -196,6 +199,16 @@ class DiffusionTestCase(unittest.TestCase):
         self.assertEquals(0.65625   , grid.scent(2, 1, PHEROMONE))
         self.assertEquals(0.140625  , grid.scent(2, 0, PHEROMONE))
         self.assertEquals(4.359375  , grid.scent(2, 2, PHEROMONE))
+
+    def test06(self):
+        """ an object knows its location when put on the grid """
+
+        grid = Grid(5, 5)
+        bug = Bug(grid, pheromoneKind=PHEROMONE, pheromoneValue=4)
+        grid.put(2, 2, bug)
+        self.assertEquals((2, 2), (bug.x, bug.y))
+        grid.remove(2, 2, bug)
+        self.assertEquals((None, None), (bug.x, bug.y))
 
 
 if __name__ == "__main__":
