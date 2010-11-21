@@ -1,6 +1,6 @@
 import unittest
 
-from net.cadrian.microcosmos.grid import Grid, LocatedObject
+from net.cadrian.microcosmos.grid import Grid, LocatedObject, MoveError
 
 
 class PheromoneKind:
@@ -34,12 +34,18 @@ class Bug(LocatedObject):
         LocatedObject.__init__(self, grid)
         self.pheromones = [Pheromone(kind=pheromoneKind, value=pheromoneValue)]
 
+    def allowTogether(self, other):
+        return False
+
 
 class Wall(LocatedObject):
     """ Walls block pheromones """
     def __init__(self, grid, pheromoneKind):
         LocatedObject.__init__(self, grid)
         self.pheromones = [AntiPheromone(kind=pheromoneKind, diffusion=0)]
+
+    def allowTogether(self, other):
+        return False
 
 
 class Pond(LocatedObject):
@@ -209,6 +215,24 @@ class DiffusionTestCase(unittest.TestCase):
         self.assertEquals((2, 2), (bug.x, bug.y))
         grid.remove(2, 2, bug)
         self.assertEquals((None, None), (bug.x, bug.y))
+
+    def test07a(self):
+        """ some objects cannot be in the same cell at the same time"""
+
+        grid = Grid(5, 5)
+        wall1 = Wall(grid, pheromoneKind=PHEROMONE)
+        grid.put(2, 2, wall1)
+        bug = Bug(grid, pheromoneKind=PHEROMONE, pheromoneValue=4)
+        self.assertFalse(grid.allowMove(2, 2, bug))
+
+    def test07b(self):
+        """ some objects cannot be in the same cell at the same time - forcing move raises an exception"""
+
+        grid = Grid(5, 5)
+        wall1 = Wall(grid, pheromoneKind=PHEROMONE)
+        grid.put(2, 2, wall1)
+        bug = Bug(grid, pheromoneKind=PHEROMONE, pheromoneValue=4)
+        self.assertRaises(MoveError, grid.put, 2, 2, bug)
 
 
 if __name__ == "__main__":

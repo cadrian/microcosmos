@@ -27,6 +27,10 @@ def square():
                 yield (dx, dy)
 
 
+class MoveError(Exception):
+    pass
+
+
 class Scent:
     """ The accumulated scent of a pheromone of some kind on a cell """
 
@@ -66,6 +70,11 @@ class Cell:
         self.y = y
         self._objects = set()
         self._scents = {}
+
+    def allowMove(self, obj):
+        def together(obj1, obj2):
+            return obj1.allowTogether(obj2) and obj2.allowTogether(obj1)
+        return all([together(obj, other) for other in self._objects])
 
     def put(self, obj):
         self._objects.add(obj)
@@ -119,7 +128,12 @@ class Grid:
         y = (y + self.height) % self.height
         return self._cells[x * self.height + y]
 
+    def allowMove(self, x, y, obj):
+        return self.cell(x, y).allowMove(obj)
+
     def put(self, x, y, obj):
+        if not self.allowMove(x, y, obj):
+            raise MoveError
         self.cell(x, y).put(obj)
 
     def remove(self, x, y, obj):
