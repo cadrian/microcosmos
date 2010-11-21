@@ -15,3 +15,6 @@ class LocatedObject:
     def moveTo(self, x, y):
         self.grid.remove(self.x, self.y, self)
         self.grid.put(x, y, self)
+
+    def remove(self):
+        self.grid.remove(self.x, self.y, self)

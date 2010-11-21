@@ -22,6 +22,7 @@ class Randomizer:
 class Exploration:
     def __init__(self, ant):
         self._ant = ant
+        self.dead = False
 
     def __str__(self):
         return "exploration"
@@ -35,6 +36,7 @@ class FollowingTarget:
         self._ant = ant
         self._x = x
         self._y = y
+        self.dead = False
 
     def __str__(self):
         return "followingTarget"
@@ -46,6 +48,7 @@ class FollowingTarget:
 class FoundTarget:
     def __init__(self, ant):
         self._ant = ant
+        self.dead = False
 
     def __str__(self):
         return "foundTarget"
@@ -54,16 +57,32 @@ class FoundTarget:
         pass
 
 
+class Dead:
+    def __init__(self, ant):
+        self._ant = ant
+        self.dead = True
+
+    def __str__(self):
+        return "dead"
+
+    def move(self):
+        self._ant.remove()
+
+
 class AntFemale(LocatedObject):
-    def __init__(self, grid, randomizer=None):
+    def __init__(self, grid, life=100, randomizer=None):
         LocatedObject.__init__(self, grid)
         self._randomizer = randomizer or Randomizer()
         self.pheromones = []
-        self.state = ""
+        self.state = None
         self.target = Target(self)
+        self._life = life
 
     def prepareToMove(self):
-        if self.target.x == self.x and self.target.y == self.y:
+        self._life = self._life - 1
+        if self._life <= 0:
+            self.state = Dead(self)
+        elif self.target.x == self.x and self.target.y == self.y:
             self.state = FoundTarget(self)
         else:
             foundX, foundY = None, None
@@ -79,3 +98,6 @@ class AntFemale(LocatedObject):
 
     def move(self):
         self.state.move()
+
+    def isDead(self):
+        return self.state.dead

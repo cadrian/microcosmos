@@ -89,6 +89,24 @@ class AntFemaleTestCase(unittest.TestCase):
         ant.move()
         self.assertEquals((2, 2), (ant.x, ant.y))
 
+    def test07(self):
+        """ ants die """
+        ant = AntFemale(self.grid, life=3, randomizer=DeterministRandomizer())
+        target = ant.target
+        self.grid.put(2, 2, ant)
+        self.grid.put(2, 2, target)
+        self.grid.diffuse()
+        self.grid.diffuse()
+        ant.prepareToMove()
+        ant.move()
+        self.assertFalse(ant.isDead())
+        ant.prepareToMove()
+        ant.move()
+        self.assertFalse(ant.isDead())
+        ant.prepareToMove()
+        ant.move()
+        self.assertTrue(ant.isDead())
+        self.assertEquals((None, None), (ant.x, ant.y))
 
 if __name__ == "__main__":
     unittest.main()
