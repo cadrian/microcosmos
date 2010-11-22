@@ -32,23 +32,19 @@ class ChoiceMenuController(AbstractMenu):
         self._levels = levels
         AbstractMenu.__init__(self, filename)
 
-    def start(self): # redefined because all the widgets are automatically created; the config only contains a template
-        if self._data.hasObject("background"):
-            PySGE.engine.addSprite(self.getData().getObject("background"))
-
+    def startImpl(self):
+        buttonTemplate = self.getData().getObject("choice")
 	for i, level in enumerate(self._levels):
-            def action(*_):
-                self.onLevel(level)
+            def customize(config):
+                def action(_):
+                    self.onLevel(level)
+                config["text"] = config["text"] % level
+                config["action"] = action
+                x, y = config["position"]
+                config["position"] = (x, y * (i+1))
 
-	    button = copy.deepcopy(self.getData().getObject("choice"))
-	    x, y = button._position
-	    button._position = (x, y * (i+1))
-	    button._text._resource = button._text._resource % level
-            button._action = action
-	    PySGE.engine.addSprite(button)
-
-	PySGE.engine.addSprite(self.getData().getObject("mainMenu"))
+	    PySGE.engine.addSprite(buttonTemplate.getButton(customize=customize))
 
     def onLevel(self, level):
-        _LOGGER.info("################################ To level: %s", level)
+        _LOGGER.info("Going to level: %s", level)
 	PySGE.application.setScreen(level)

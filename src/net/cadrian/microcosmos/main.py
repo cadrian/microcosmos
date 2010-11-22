@@ -16,13 +16,12 @@ class Game(Application):
     def __init__(self):
         #setupTestLogging(logging.DEBUG)
         setupTestLogging(logging.INFO)
-
 	configPath = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data/game.ini")
         Application.__init__(self, configPath)
 
     def setUp(self):
         self._levels = []
-        PySGE.objectFactory.registerModules("objects")
+        PySGE.objectFactory.registerModules("net.cadrian.microcosmos.widgets")
         PySGE.setScoreHandler(ScoresData, PySGE.configuration.getScoresPath())
         self._makeLevels()
         self._makeMenus()
