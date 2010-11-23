@@ -34,7 +34,7 @@ class ChoiceMenuController(AbstractMenu):
 
     def startImpl(self):
         buttonTemplate = self.getData().getObject("choice")
-	for i, level in enumerate(self._levels):
+        for i, level in enumerate(self._levels):
             def customize(config):
                 def action(_):
                     self.onLevel(level)
@@ -43,8 +43,8 @@ class ChoiceMenuController(AbstractMenu):
                 x, y = config["position"]
                 config["position"] = (x, y * (i+1))
 
-	    PySGE.engine.addSprite(buttonTemplate.getButton(customize=customize))
+            PySGE.engine.addSprite(buttonTemplate.getButton(customize=customize))
 
     def onLevel(self, level):
         _LOGGER.info("Going to level: %s", level)
-	PySGE.application.setScreen(level)
+        PySGE.application.setScreen(level)

@@ -1,1 +1,26 @@
 background = background(theme="levelBackground")
+
+grid = grid(
+    position=(0, 0),
+    size=(600, 600),
+
+    mapSize=(100, 100),
+    tile=32,
+
+    landscape=(
+        sand(
+            tilesRect=((10, 10), (40, 40)),
+        ),
+        sand(
+            tilesRect=((10, 60), (100, 60)),
+        ),
+        water(
+            tilesRect=((70, 50), (90, 70)),
+        ),
+        soil(
+            tilesRect=((50, 10), (70, 100)),
+        ),
+    ),
+)
+
+#hive = [antFemale(theme="antFemale", position=(50, 50))]

@@ -1,4 +1,3 @@
-
 import os
 from pysge.dataModel.data import DataFile
 from pysge.controllers.base import AbstractController
@@ -11,7 +10,8 @@ _LOGGER = getLogger(__name__)
 class GameData(DataFile):
     def loadImpl(self):
         #self.startPosition = self.getObject('hero').getPosition()
-        self.addObject("clock", self._symbols["clock"](position=(350, 230)))
+        #self.addObject("clock", self._symbols["clock"](position=(350, 230)))
+        pass
 
     def addWall(self, wall):
         wall = self._symbols["wall"](wall[0], wall[1])
@@ -26,14 +26,14 @@ class LevelController(AbstractController):
     def startImpl(self):
         #self.getData().getObject("goal").setCollisionCallback(self.victory)
         #self.getData().getObject("walls").setCollisionCallback(self.death)
-        PySGE.eventManager.connect("collision", self.handleCollision)
-        PySGE.eventManager.connect("firstMove", lambda x:self.getData().getObject("clock").start())
+        #PySGE.eventManager.connect("collision", self.handleCollision)
+        #PySGE.eventManager.connect("firstMove", lambda x:self.getData().getObject("clock").start())
         #PySGE.engine.addSprite(*self.getData().getObject("walls").sprites())
-        PySGE.engine.addSprite(
-            #self.getData().getObject("hero"),
-            self.getData().getObject("clock"),
-            #self.getData().getObject("goal"),
-        )
+        #PySGE.engine.addSprite(
+        #    #self.getData().getObject("hero"),
+        #    self.getData().getObject("clock"),
+        #    #self.getData().getObject("goal"),
+        #)
         self.reset()
 
     def endImpl(self):
@@ -42,7 +42,7 @@ class LevelController(AbstractController):
 
     def reset(self):
         #self.getData().getObject("hero").setPosition(self.getData().startPosition)
-        self.getData().getObject("clock").reset()
+        #self.getData().getObject("clock").reset()
         PySGE.engine.updateAll()
 
     def death(self):
@@ -50,8 +50,8 @@ class LevelController(AbstractController):
         PySGE.application.setScreen('defeat')
 
     def victory(self):
-        _LOGGER.critical("WON! %s", self.getData().getObject("clock").getElapsedTime())
-        PySGE.scores.setScore(self.getData().name, self.getData().getObject("clock").getElapsedTime())
+        #_LOGGER.critical("WON! %s", self.getData().getObject("clock").getElapsedTime())
+        #PySGE.scores.setScore(self.getData().name, self.getData().getObject("clock").getElapsedTime())
         PySGE.application.setScreen('victory')
 
     def handleCollision(self, event):
@@ -60,5 +60,3 @@ class LevelController(AbstractController):
 
         if hasattr(event.secondObject, getHandlerName(event.firstObject)):
             getattr(event.secondObject, getHandlerName(event.firstObject))()
-
-
