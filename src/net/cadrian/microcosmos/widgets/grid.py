@@ -23,8 +23,6 @@ class Grid(BasicSprite):
         self._resource = PySGE.engine.getSurface((x * self._tile, y * self._tile), TRANSPARENCY)
         self.rect = self._resource.get_rect()
 
-        width, height = self._size
-        self._visibleSize = (math.ceil(width / self._tile), math.ceil(height / self._tile))
         self._scrollPosition = (0, 0)
 
         self._landscape = reduce(lambda x, y: x + y, [[tile for tile in feature.expand()] for feature in config.landscape], [])
@@ -52,17 +50,16 @@ class Grid(BasicSprite):
         x, y = self._fixTilePosition(tileX, tileY)
         return (x * self._tile, y * self._tile)
 
-    def _isVisible(self, tileX, tileY):
-        x, y = self._fixTilePosition(tileX, tileY)
-        w, h = self._visibleSize
+    def _isVisible(self, x, y):
+        w, h = self._size
         return 0 <= x <= w and 0 <= y <= h
 
     def update(self):
         map(lambda x: x.update(), self._scrollers + self._sprites)
 
         def updateLandscapeFeature(feature):
-            if self._isVisible(feature.mapX, feature.mapY):
-                x, y = self._realTilePosition(feature.mapX, feature.mapY)
+            x, y = self._realTilePosition(feature.mapX, feature.mapY)
+            if self._isVisible(x, y):
                 image, rect = feature.drawImage(x, y, self._tile)
                 PySGE.engine.draw(self._resource, image, rect)
         map(updateLandscapeFeature, [feature for feature in self._landscape])
