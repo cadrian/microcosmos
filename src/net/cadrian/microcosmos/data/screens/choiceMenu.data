@@ -1,3 +1,3 @@
 background = background(theme="menuBackground")
-choice     = templateButton(text="Start '%s' level", position=(100, 40))
-mainMenu   = button(text="Back", position=(100, 440))
+choice     = templateButton(text="Start '%s' level", position=(100, 300), increment=40)
+mainMenu   = button(text="Back", position=(100, 530))

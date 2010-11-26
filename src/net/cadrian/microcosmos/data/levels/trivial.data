@@ -5,20 +5,20 @@ grid = grid(
     size=(600, 600),
 
     mapSize=(100, 100),
-    tile=32,
+    tile=24,
 
     landscape=(
         sand(
-            tilesRect=((10, 10), (40, 40)),
+            tilesRect=((0, 0), (50, 50)),
         ),
-        sand(
-            tilesRect=((10, 60), (100, 60)),
+        wall(
+            tilesRect=((0, 50), (50, 50)),
         ),
         water(
-            tilesRect=((70, 50), (90, 70)),
+            tilesRect=((50, 0), (50, 50)),
         ),
         soil(
-            tilesRect=((50, 10), (70, 100)),
+            tilesRect=((50, 50), (50, 50)),
         ),
     ),
 )
