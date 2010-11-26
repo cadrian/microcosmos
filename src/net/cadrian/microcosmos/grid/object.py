@@ -18,6 +18,7 @@ class LocatedObject:
         self.x = None
         self.y = None
         self.grid = grid
+        self.pheromones = []
 
     def onGridPut(self, x, y):
         self.x = x
@@ -33,3 +34,6 @@ class LocatedObject:
 
     def remove(self):
         self.grid.remove(self.x, self.y, self)
+
+    def isAlive(self):
+        return False

@@ -18,11 +18,10 @@ from net.cadrian.microcosmos.grid import LocatedObject
 
 class LandscapeFeature(LocatedObject):
     def __init__(self, grid):
-	LocatedObject.__init__(self, grid)
-	self.pheromones = []
+        LocatedObject.__init__(self, grid)
 
     def allowTogether(self, other):
-	return True
+        return True
 
 
 class Grass(LandscapeFeature):
@@ -39,9 +38,9 @@ class Soil(LandscapeFeature):
 
 class Wall(LandscapeFeature):
     def allowTogether(self, other):
-	return False
+        return other.canFly()
 
 
 class Water(LandscapeFeature):
     def allowTogether(self, other):
-	return False
+        return other.canSwim() or other.canFly()

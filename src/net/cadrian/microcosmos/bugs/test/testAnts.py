@@ -16,7 +16,7 @@
 import unittest
 
 from net.cadrian.microcosmos.grid import Grid
-from net.cadrian.microcosmos.bugs import AntFemale
+from net.cadrian.microcosmos.bugs import AntFemale, AntFemaleTarget
 
 class DeterministRandomizer:
     def accept(self):
@@ -38,9 +38,10 @@ class AntFemaleTestCase(unittest.TestCase):
     def test01b(self):
         """ target not detected => exploration """
         ant = AntFemale(self.grid, randomizer=DeterministRandomizer())
-        target = ant.target
+        target = AntFemaleTarget(self.grid)
         self.grid.put(2, 2, ant)
         self.grid.put(0, 0, target)
+        ant.goToTarget(target)
         self.grid.diffuse()
         ant.prepareToMove()
         self.assertEquals("exploration", str(ant.state))
@@ -48,9 +49,10 @@ class AntFemaleTestCase(unittest.TestCase):
     def test02(self):
         """ target detected => following the scent """
         ant = AntFemale(self.grid, randomizer=DeterministRandomizer())
-        target = ant.target
+        target = AntFemaleTarget(self.grid)
         self.grid.put(2, 2, ant)
         self.grid.put(0, 0, target)
+        ant.goToTarget(target)
         self.grid.diffuse()
         self.grid.diffuse()
         ant.prepareToMove()
@@ -59,9 +61,10 @@ class AntFemaleTestCase(unittest.TestCase):
     def test03(self):
         """ target reached => staying there """
         ant = AntFemale(self.grid, randomizer=DeterministRandomizer())
-        target = ant.target
+        target = AntFemaleTarget(self.grid)
         self.grid.put(2, 2, ant)
         self.grid.put(2, 2, target)
+        ant.goToTarget(target)
         ant.prepareToMove()
         self.assertEquals("foundTarget", str(ant.state))
 
@@ -78,9 +81,10 @@ class AntFemaleTestCase(unittest.TestCase):
     def test05(self):
         """ ant movement in target follow """
         ant = AntFemale(self.grid, randomizer=DeterministRandomizer())
-        target = ant.target
+        target = AntFemaleTarget(self.grid)
         self.grid.put(2, 2, ant)
         self.grid.put(0, 0, target)
+        ant.goToTarget(target)
         self.grid.diffuse()
         self.grid.diffuse()
         ant.prepareToMove()
@@ -94,9 +98,10 @@ class AntFemaleTestCase(unittest.TestCase):
     def test06(self):
         """ ant movement when target reached """
         ant = AntFemale(self.grid, randomizer=DeterministRandomizer())
-        target = ant.target
+        target = AntFemaleTarget(self.grid)
         self.grid.put(2, 2, ant)
         self.grid.put(2, 2, target)
+        ant.goToTarget(target)
         self.grid.diffuse()
         self.grid.diffuse()
         ant.prepareToMove()
@@ -107,9 +112,10 @@ class AntFemaleTestCase(unittest.TestCase):
     def test07(self):
         """ ants die """
         ant = AntFemale(self.grid, life=3, randomizer=DeterministRandomizer())
-        target = ant.target
+        target = AntFemaleTarget(self.grid)
         self.grid.put(2, 2, ant)
         self.grid.put(2, 2, target)
+        ant.goToTarget(target)
         self.grid.diffuse()
         self.grid.diffuse()
         ant.prepareToMove()

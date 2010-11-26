@@ -167,4 +167,3 @@ class Grid:
 
     def scent(self, x, y, pheromoneKind):
         return self.cell(x, y).scent(pheromoneKind)
-
