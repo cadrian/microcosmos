@@ -41,7 +41,8 @@ class ChoiceMenuController(AbstractMenu):
 		config["text"] = config["text"] % level
 		config["action"] = action
 		x, y = config["position"]
-		config["position"] = (x, y + config["increment"] * i)
+		dx, dy = config["increment"]
+		config["position"] = (x + dx * i, y + dy * i)
 
 	    PySGE.engine.addSprite(buttonTemplate.getButton(customize=customize))
 
