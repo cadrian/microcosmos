@@ -16,7 +16,8 @@
 import unittest
 
 from net.cadrian.microcosmos.grid import Grid
-from net.cadrian.microcosmos.bugs import AntFemale, AntFemaleTarget
+from net.cadrian.microcosmos.bugs import AntFemale, AntFemaleTarget, AntQueen
+from net.cadrian.microcosmos.landscape import Grass, Sand, Soil
 
 class DeterministRandomizer:
     def accept(self):
@@ -128,6 +129,66 @@ class AntFemaleTestCase(unittest.TestCase):
         ant.move()
         self.assertTrue(ant.isDead())
         self.assertEquals((None, None), (ant.x, ant.y))
+
+
+class AntQueenTestCase(unittest.TestCase):
+    def setUp(self):
+        self.grid = Grid(5, 5)
+        self.ant = AntQueen(self.grid, life=10, nextPosition=lambda square: square[0], nextAnt=lambda: AntFemale)
+
+    def test01a(self):
+        """ a queen that does not produce an ant does not lose life points """
+        self.ant._next = None
+        self.assert_(self.ant._createNext() is None)
+        self.assertEquals(10, self.ant._life)
+
+    def test01b(self):
+        """ a queen that produces an ant loses some life """
+        self.ant._next = lambda grid: AntFemale(grid)
+        self.assertEquals(AntFemale, self.ant._createNext().__class__)
+        self.assertEquals(9, self.ant._life)
+
+    def test02a(self):
+        """ a queen can produce ants on soil """
+        self.grid.put(2, 2, Soil(self.grid))
+        self.grid.put(2, 2, self.ant)
+        self.assert_(self.ant._next is None)
+        self.ant.prepareToMove()
+        self.assert_(self.ant._next is not None)
+        self.ant.move()
+        self.assertEquals(AntFemale, self.grid.bugAt(1, 1).__class__)
+
+    def test02b(self):
+        """ a queen can produce ants on grass """
+        self.grid.put(2, 2, Grass(self.grid))
+        self.grid.put(2, 2, self.ant)
+        self.assert_(self.ant._next is None)
+        self.ant.prepareToMove()
+        self.assert_(self.ant._next is not None)
+        self.ant.move()
+        self.assertEquals(AntFemale, self.grid.bugAt(1, 1).__class__)
+
+    def test02c(self):
+        """ a queen cannot produce ants on sand """
+        self.grid.put(2, 2, Sand(self.grid))
+        self.grid.put(2, 2, self.ant)
+        self.assert_(self.ant._next is None)
+        self.ant.prepareToMove()
+        self.assert_(self.ant._next is None)
+        self.ant.move()
+        self.assert_(self.grid.bugAt(1, 1) is None)
+
+    def test03(self):
+        """ a dead queen produces nothing """
+        self.grid.put(2, 2, Grass(self.grid))
+        self.grid.put(2, 2, self.ant)
+        self.assert_(self.ant._next is None)
+        self.ant._life = 0
+        self.ant.prepareToMove()
+        self.assert_(self.ant._next is None)
+        self.ant.move()
+        self.assert_(self.grid.bugAt(1, 1) is None)
+
 
 if __name__ == "__main__":
     unittest.main()

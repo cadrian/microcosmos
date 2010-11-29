@@ -95,7 +95,7 @@ class Dead:
 
 class AntFemale(AbstractAnt):
     def __init__(self, grid, life=100, randomizer=None):
-        LocatedObject.__init__(self, grid)
+        AbstractAnt.__init__(self, grid)
         self._randomizer = randomizer or Randomizer()
         self.pheromones = []
         self.state = None

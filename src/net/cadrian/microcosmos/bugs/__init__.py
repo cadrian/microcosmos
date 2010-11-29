@@ -14,3 +14,6 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 from net.cadrian.microcosmos.bugs.antFemales import AntFemale, Target as AntFemaleTarget
+from net.cadrian.microcosmos.bugs.antQueens import AntQueen
+from net.cadrian.microcosmos.bugs.antSoldiers import AntSoldier
+from net.cadrian.microcosmos.bugs.antWorkers import AntWorker
