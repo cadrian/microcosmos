@@ -13,25 +13,34 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-from net.cadrian.microcosmos.widgets.bugs import RedAntFemale, RedAntQueen, RedAntSoldier, RedAntWorker
-from net.cadrian.microcosmos.widgets.button import TemplateButton
-from net.cadrian.microcosmos.widgets.grid import Grid
-from net.cadrian.microcosmos.widgets.landscape import Grass, Sand, Soil, Wall, Water
+from pysge.objects.base import BasicSprite
+from pysge.utils.logger import getLogger
+
+_LOGGER = getLogger(__name__)
 
 
-builtins = {
-    "templateButton": TemplateButton,
+class AbstractAnt(BasicSprite):
+    def __init__(self, config):
+        config.theme = "%s_ant_%s" % (self.ANT_COLOR, self.ANT_CASTE)
+        config.layer = 2
+        BasicSprite.__init__(self, config)
 
-    "grid": Grid,
 
-    "grass": Grass,
-    "sand": Sand,
-    "soil": Soil,
-    "wall": Wall,
-    "water": Water,
+class RedAnt(AbstractAnt):
+    ANT_COLOR = "red"
 
-    "redAntFemale": RedAntFemale,
-    "redAntQueen": RedAntQueen,
-    "redAntSoldier": RedAntSoldier,
-    "redAntWorker": RedAntWorker,
-}
+
+class RedAntFemale(RedAnt):
+    ANT_CASTE = "female"
+
+
+class RedAntQueen(RedAnt):
+    ANT_CASTE = "queen"
+
+
+class RedAntSoldier(RedAnt):
+    ANT_CASTE = "soldier"
+
+
+class RedAntWorker(RedAnt):
+    ANT_CASTE = "worker"

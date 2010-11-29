@@ -23,4 +23,4 @@ grid = grid(
     ),
 )
 
-#hive = [antFemale(theme="antFemale", position=(50, 50))]
+queen = redAntQueen(position=(10, 10))
