@@ -17,6 +17,7 @@ import random
 
 from net.cadrian.microcosmos.grid import LocatedObject
 from net.cadrian.microcosmos.bugs.ant import AbstractAnt
+from net.cadrian.microcosmos.bugs.antQueens import AntQueen
 from net.cadrian.microcosmos.bugs.pheromones import PheromoneKind, Pheromone
 
 TARGET_PHEROMONE_KIND = PheromoneKind(0.125)
@@ -70,15 +71,29 @@ class FollowingTarget:
 
 
 class FoundTarget:
-    def __init__(self, ant):
-        self._ant = ant
+    def __init__(self, ant, grid, x, y, antPromotion):
+        self.ant = ant
+        self.grid = grid
+        self.x = x
+        self.y = y
         self.dead = False
+        self.promote = False
+        self.antPromotion = antPromotion
 
     def __str__(self):
         return "foundTarget"
 
     def move(self):
-        pass
+        self.grid.accept(self.x, self.y, self)
+        if self.promote:
+            self.grid.remove(self.x, self.y, self.ant)
+            self.grid.put(self.x, self.y, self.antPromotion(self.grid))
+
+    def visitSoil(self, soil):
+        self.promote = True
+
+    def visitGrass(self, grass):
+        self.promote = True
 
 
 class Dead:
@@ -94,13 +109,14 @@ class Dead:
 
 
 class AntFemale(AbstractAnt):
-    def __init__(self, grid, life=100, randomizer=None):
+    def __init__(self, grid, antPromotion=AntQueen, life=100, randomizer=None):
         AbstractAnt.__init__(self, grid)
         self._randomizer = randomizer or Randomizer()
         self.pheromones = []
         self.state = None
         self.target = None
         self._life = life
+        self._antPromotion = antPromotion
 
     def goToTarget(self, target):
         self.target = target
@@ -118,7 +134,7 @@ class AntFemale(AbstractAnt):
         elif self.target is None:
             self.state = Exploration(self)
         elif self.target.x == self.x and self.target.y == self.y:
-            self.state = FoundTarget(self)
+            self.state = FoundTarget(self, self.grid, self.x, self.y, self._antPromotion)
         else:
             foundX, foundY = None, None
             foundScent = 0

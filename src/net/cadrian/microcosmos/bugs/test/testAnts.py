@@ -130,6 +130,24 @@ class AntFemaleTestCase(unittest.TestCase):
         self.assertTrue(ant.isDead())
         self.assertEquals((None, None), (ant.x, ant.y))
 
+    def test08(self):
+        """ a female that reaches its target on soil becomes a queen """
+        ant = AntFemale(self.grid, life=3, randomizer=DeterministRandomizer())
+        target = AntFemaleTarget(self.grid)
+        self.grid.put(2, 2, Soil(self.grid))
+        self.grid.put(2, 2, ant)
+        self.grid.put(2, 2, target)
+        ant.goToTarget(target)
+        self.grid.diffuse()
+        self.grid.diffuse()
+        ant.prepareToMove()
+        self.assertEquals("foundTarget", str(ant.state))
+        ant.move()
+        queen = self.grid.bug(2, 2)
+        self.assertNotEquals(ant, queen)
+        self.assertEquals((2, 2), (queen.x, queen.y))
+        self.assertEquals(AntQueen, queen.__class__)
+
 
 class AntQueenTestCase(unittest.TestCase):
     def setUp(self):
@@ -165,7 +183,7 @@ class AntQueenTestCase(unittest.TestCase):
         self.ant.prepareToMove()
         self.assert_(self.ant._next is not None)
         self.ant.move()
-        self.assertEquals(AntFemale, self.grid.bugAt(1, 1).__class__)
+        self.assertEquals(AntFemale, self.grid.bug(1, 1).__class__)
 
     def test02b(self):
         """ a queen can produce ants on grass """
@@ -175,7 +193,7 @@ class AntQueenTestCase(unittest.TestCase):
         self.ant.prepareToMove()
         self.assert_(self.ant._next is not None)
         self.ant.move()
-        self.assertEquals(AntFemale, self.grid.bugAt(1, 1).__class__)
+        self.assertEquals(AntFemale, self.grid.bug(1, 1).__class__)
 
     def test02c(self):
         """ a queen cannot produce ants on sand """
@@ -185,7 +203,7 @@ class AntQueenTestCase(unittest.TestCase):
         self.ant.prepareToMove()
         self.assert_(self.ant._next is None)
         self.ant.move()
-        self.assert_(self.grid.bugAt(1, 1) is None)
+        self.assert_(self.grid.bug(1, 1) is None)
 
     def test03(self):
         """ a dead queen produces nothing """
@@ -196,7 +214,7 @@ class AntQueenTestCase(unittest.TestCase):
         self.ant.prepareToMove()
         self.assert_(self.ant._next is None)
         self.ant.move()
-        self.assert_(self.grid.bugAt(1, 1) is None)
+        self.assert_(self.grid.bug(1, 1) is None)
 
 
 if __name__ == "__main__":

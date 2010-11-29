@@ -17,7 +17,6 @@ import random
 
 from net.cadrian.microcosmos.grid import LocatedObject
 from net.cadrian.microcosmos.bugs.ant import AbstractAnt
-from net.cadrian.microcosmos.bugs.antFemales import AntFemale
 from net.cadrian.microcosmos.bugs.antSoldiers import AntSoldier
 from net.cadrian.microcosmos.bugs.antWorkers import AntWorker
 from net.cadrian.microcosmos.bugs.pheromones import PheromoneKind, Pheromone
@@ -30,7 +29,6 @@ def randomNextPosition(square):
 def randomNextAnt():
     return random.choice(
         (
-            (AntFemale, 4),
             (AntSoldier, 2),
             (AntWorker, 1),
         )
