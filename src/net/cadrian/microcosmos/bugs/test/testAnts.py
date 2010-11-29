@@ -134,7 +134,7 @@ class AntFemaleTestCase(unittest.TestCase):
 class AntQueenTestCase(unittest.TestCase):
     def setUp(self):
         self.grid = Grid(5, 5)
-        self.ant = AntQueen(self.grid, life=10, nextPosition=lambda square: square[0], nextAnt=lambda: AntFemale)
+        self.ant = AntQueen(self.grid, life=10, nextPosition=lambda square: square[0], nextAnt=lambda: (AntFemale, 4))
 
     def test01a(self):
         """ a queen that does not produce an ant does not lose life points """
@@ -145,8 +145,17 @@ class AntQueenTestCase(unittest.TestCase):
     def test01b(self):
         """ a queen that produces an ant loses some life """
         self.ant._next = lambda grid: AntFemale(grid)
+        self.ant._cost = 1
         self.assertEquals(AntFemale, self.ant._createNext().__class__)
         self.assertEquals(9, self.ant._life)
+
+    def test01c(self):
+        """ a queen with not enough life left will not produce the ant """
+        self.ant._life = 3
+        self.ant._cost = 3
+        self.ant._next = lambda grid: AntFemale(grid)
+        self.assert_(self.ant._createNext() is None)
+        self.assertEquals(3, self.ant._life)
 
     def test02a(self):
         """ a queen can produce ants on soil """

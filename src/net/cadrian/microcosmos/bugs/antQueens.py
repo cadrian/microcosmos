@@ -28,7 +28,13 @@ def randomNextPosition(square):
 
 
 def randomNextAnt():
-    return random.choice((AntFemale, AntSoldier, AntWorker))
+    return random.choice(
+        (
+            (AntFemale, 4),
+            (AntSoldier, 2),
+            (AntWorker, 1),
+        )
+    )
 
 
 class LandscapeVisitor:
@@ -66,7 +72,7 @@ class AntQueen(AbstractAnt):
             landscapeVisitor = LandscapeVisitor()
             self.grid.accept(self.x, self.y, landscapeVisitor)
             if landscapeVisitor.sustainsQueen:
-                self._next = self._nextAntFactory()
+                self._next, self._cost = self._nextAntFactory()
 
     def move(self):
         newborn = self._createNext()
@@ -77,7 +83,7 @@ class AntQueen(AbstractAnt):
         self._next = None
 
     def _createNext(self):
-        if self._next:
+        if self._next and self._cost < self._life:
             result = self._next(self.grid)
-            self._life = self._life - 1
+            self._life = self._life - self._cost
             return result
