@@ -13,14 +13,11 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-import logging
 import unittest
 
 from net.cadrian.microcosmos.grid import Grid
 from net.cadrian.microcosmos.bugs import AntFemale, AntFemaleTarget, AntQueen, AntWorker
 from net.cadrian.microcosmos.landscape import Grass, Sand, Soil
-
-from pysge.utils.logger import consoleHandler, fileHandler, getLogger, setupTestLogging
 
 
 class DeterministRandomizer:
@@ -257,5 +254,7 @@ class AntWorkerTestCase(unittest.TestCase):
 
 
 if __name__ == "__main__":
+    import logging
+    from pysge.utils.logger import setupTestLogging
     setupTestLogging(logging.DEBUG)
     unittest.main()
