@@ -19,9 +19,6 @@ from net.cadrian.microcosmos.bugs.pheromones import PheromoneKind, Pheromone
 
 
 class AntWorker(AbstractAnt):
-    def __init__(self, grid):
-        AbstractAnt.__init__(self, grid)
+    def __init__(self, grid, life=100):
+        AbstractAnt.__init__(self, grid, life=life)
         self.pheromones = []
-
-    def isAlive(self):
-        return True
