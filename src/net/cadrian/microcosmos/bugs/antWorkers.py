@@ -15,10 +15,48 @@
 #
 from net.cadrian.microcosmos.grid import LocatedObject
 from net.cadrian.microcosmos.bugs.ant import AbstractAnt
+from net.cadrian.microcosmos.bugs.antQueens import AntQueen
 from net.cadrian.microcosmos.bugs.pheromones import PheromoneKind, Pheromone
+
+from pysge.utils.logger import getLogger
+
+
+_LOGGER = getLogger(__name__)
+
+
+TRAIL_HOME = PheromoneKind(0.125)
+
+
+class Explore:
+    def __init__(self, ant):
+        self.ant = ant
+
+    def move(self):
+        self.ant.grid.remove(self.ant.x, self.ant.y, self.ant)
+        self.ant.grid.put(0, 0, self.ant)
 
 
 class AntWorker(AbstractAnt):
     def __init__(self, grid, life=100):
         AbstractAnt.__init__(self, grid, life=life)
-        self.pheromones = []
+        self._trailHome = Pheromone(TRAIL_HOME, 32)
+        self.pheromones = set()
+        self.state = None
+
+    def prepareToMove(self):
+        def add(x, y):
+            x.add(y)
+            return x
+        bugs = reduce(add, [self.grid.bug(x, y).__class__ for x, y in self.grid.square(self.x, self.y)], set())
+        if AntQueen in bugs:
+            self.setLeavingHome()
+        self.state = Explore(self)
+
+    def setLeavingHome(self):
+        self.pheromones.add(self._trailHome)
+
+    def move(self):
+        self.state.move()
+
+    def isDead(self):
+        return self.state.dead

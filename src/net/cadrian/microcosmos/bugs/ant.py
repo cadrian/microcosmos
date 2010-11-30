@@ -14,3 +14,6 @@ class AbstractAnt(LocatedObject):
 
     def canSwim(self):
         return False
+
+    def allowTogether(self, other):
+        return not other.isAlive()

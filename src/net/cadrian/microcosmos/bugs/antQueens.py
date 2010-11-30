@@ -17,22 +17,11 @@ import random
 
 from net.cadrian.microcosmos.grid import LocatedObject
 from net.cadrian.microcosmos.bugs.ant import AbstractAnt
-from net.cadrian.microcosmos.bugs.antSoldiers import AntSoldier
-from net.cadrian.microcosmos.bugs.antWorkers import AntWorker
 from net.cadrian.microcosmos.bugs.pheromones import PheromoneKind, Pheromone
 
 
 def randomNextPosition(square):
     return random.choice(square)
-
-
-def randomNextAnt():
-    return random.choice(
-        (
-            (AntSoldier, 2),
-            (AntWorker, 1),
-        )
-    )
 
 
 class LandscapeVisitor:
@@ -52,13 +41,10 @@ class AntQueen(AbstractAnt):
         self.pheromones = []
         self._next = None
         self._nextPositionFactory = nextPosition or randomNextPosition
-        self._nextAntFactory = nextAnt or randomNextAnt
+        self._nextAntFactory = nextAnt
 
     def isDead(self):
         return self._life == 0
-
-    def allowTogether(self, other):
-        return not other.isAlive()
 
     def prepareToMove(self):
         self._life = self._life - 1

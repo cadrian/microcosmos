@@ -148,6 +148,3 @@ class AntFemale(AbstractAnt):
 
     def isDead(self):
         return self.state.dead
-
-    def allowTogether(self, other):
-        return not other.isAlive()

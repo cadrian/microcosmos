@@ -13,11 +13,15 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+import logging
 import unittest
 
 from net.cadrian.microcosmos.grid import Grid
-from net.cadrian.microcosmos.bugs import AntFemale, AntFemaleTarget, AntQueen
+from net.cadrian.microcosmos.bugs import AntFemale, AntFemaleTarget, AntQueen, AntWorker
 from net.cadrian.microcosmos.landscape import Grass, Sand, Soil
+
+from pysge.utils.logger import consoleHandler, fileHandler, getLogger, setupTestLogging
+
 
 class DeterministRandomizer:
     def accept(self):
@@ -218,5 +222,40 @@ class AntQueenTestCase(unittest.TestCase):
         self.assert_(self.grid.bug(1, 1) is None)
 
 
+class AntWorkerTestCase(unittest.TestCase):
+    from net.cadrian.microcosmos.bugs.antWorkers import TRAIL_HOME
+
+    def setUp(self):
+        self.grid = Grid(5, 5)
+        self.queen = AntQueen(self.grid)
+        self.ant = AntWorker(self.grid)
+
+    def test01a(self):
+        """ an ant moving from the hill leaves a trail -- note; the hill is the square around the queen -- ant in the hill """
+        self.grid.put(2, 2, self.queen)
+        self.grid.put(1, 1, self.ant)
+        self.ant.prepareToMove()
+        self.grid.diffuse()
+        self.assertEquals(32, self.grid.scent(1, 1, self.TRAIL_HOME))
+
+    def test01b(self):
+        """ an ant moving from the hill leaves a trail -- note; the hill is the square around the queen -- ant outside the hill """
+        self.grid.put(2, 2, self.queen)
+        self.grid.put(0, 0, self.ant)
+        self.ant.prepareToMove()
+        self.grid.diffuse()
+        self.assertEquals(0, self.grid.scent(0, 0, self.TRAIL_HOME))
+
+    def test01c(self):
+        """ an ant moving from the hill leaves a trail -- note; the hill is the square around the queen -- ant out of the fill but marked as coming from it """
+        self.ant.setLeavingHome()
+        self.grid.put(2, 2, self.queen)
+        self.grid.put(0, 0, self.ant)
+        self.ant.prepareToMove()
+        self.grid.diffuse()
+        self.assertEquals(32, self.grid.scent(0, 0, self.TRAIL_HOME))
+
+
 if __name__ == "__main__":
+    setupTestLogging(logging.DEBUG)
     unittest.main()
