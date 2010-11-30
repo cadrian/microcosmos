@@ -85,6 +85,7 @@ class Cell:
         self.y = y
         self._objects = set()
         self._scents = {}
+        self._bug = None
 
     def allowMove(self, obj):
         def together(obj1, obj2):
@@ -93,13 +94,15 @@ class Cell:
 
     def put(self, obj):
         self._objects.add(obj)
-        for pheromone in obj.pheromones:
-            self._ensurePheromone(pheromone.kind)
         obj.onGridPut(self.x, self.y)
+        if obj.isAlive():
+            self._bug = obj
 
     def remove(self, obj):
         self._objects.remove(obj)
         obj.onGridRemove(self.x, self.y)
+        if obj.isAlive():
+            self._bug = None
 
     def _ensurePheromone(self, pheromoneKind):
         if not self._scents.has_key(pheromoneKind):
@@ -109,6 +112,9 @@ class Cell:
         return self._scents.get(pheromoneKind, NO_SCENT).value
 
     def diffuseScent(self, square):
+        for obj in self._objects:
+            for pheromone in obj.pheromones:
+                self._ensurePheromone(pheromone.kind)
         for pheromoneKind, scent in self._scents.iteritems():
             for cell in square:
                 cell._ensurePheromone(pheromoneKind)
@@ -120,6 +126,14 @@ class Cell:
     def commitDiffusion(self):
         for scent in self._scents.values():
             scent.commitDiffusion()
+
+    def bug(self):
+        return self._bug
+
+    def accept(self, visitor):
+        def acceptObject(object):
+            object.accept(visitor)
+        map(acceptObject, self._objects)
 
 
 class Grid:
@@ -167,3 +181,9 @@ class Grid:
 
     def scent(self, x, y, pheromoneKind):
         return self.cell(x, y).scent(pheromoneKind)
+
+    def bug(self, x, y):
+        return self.cell(x, y).bug()
+
+    def accept(self, x, y, visitor):
+        self.cell(x, y).accept(visitor)

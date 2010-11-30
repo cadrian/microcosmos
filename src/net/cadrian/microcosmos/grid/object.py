@@ -20,6 +20,11 @@ class LocatedObject:
         self.grid = grid
         self.pheromones = []
 
+    def accept(self, visitor):
+        visitorName = "visit" + self.__class__.__name__
+        if hasattr(visitor, visitorName):
+            getattr(visitor, "visit" + self.__class__.__name__)(self)
+
     def onGridPut(self, x, y):
         self.x = x
         self.y = y
