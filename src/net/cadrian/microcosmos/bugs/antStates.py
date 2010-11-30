@@ -13,8 +13,6 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-import random
-
 from pysge.utils.logger import getLogger
 
 
@@ -30,12 +28,8 @@ class Exploration:
         return "exploration"
 
     def move(self):
-        square = self.ant.grid.square(self.ant.x, self.ant.y)
-        x, y = random.choice(square)
-        while not self.ant.grid.allowMove(x, y, self.ant) and len(square) > 0:
-            square.remove((x, y))
-            x, y = random.choice(square)
-        if len(square) > 0:
+        x, y = self.ant.findEmptyCell()
+        if x or y:
             self.ant.moveTo(x, y)
 
 

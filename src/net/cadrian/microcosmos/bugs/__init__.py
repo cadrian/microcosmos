@@ -17,3 +17,5 @@ from net.cadrian.microcosmos.bugs.antFemales import AntFemale, Target as AntFema
 from net.cadrian.microcosmos.bugs.antQueens import AntQueen
 from net.cadrian.microcosmos.bugs.antSoldiers import AntSoldier
 from net.cadrian.microcosmos.bugs.antWorkers import AntWorker
+
+from net.cadrian.microcosmos.bugs.lice import Louse

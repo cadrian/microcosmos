@@ -225,7 +225,7 @@ class AntWorkerTestCase(unittest.TestCase):
     def setUp(self):
         self.grid = Grid(5, 5)
         self.queen = AntQueen(self.grid)
-        self.ant = AntWorker(self.grid)
+        self.ant = AntWorker(self.grid, randomizer=DeterministRandomizer())
 
     def test01a(self):
         """ an ant moving from the hill leaves a trail -- note: the hill is the square around the queen """
