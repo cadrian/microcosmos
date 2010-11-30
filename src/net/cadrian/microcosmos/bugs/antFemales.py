@@ -87,7 +87,7 @@ class FoundTarget:
         self.grid.accept(self.x, self.y, self)
         if self.promote:
             self.grid.remove(self.x, self.y, self.ant)
-            self.grid.put(self.x, self.y, self.antPromotion(self.grid))
+            self.grid.put(self.x, self.y, self.antPromotion(self.grid, life=self.ant._life))
 
     def visitSoil(self, soil):
         self.promote = True

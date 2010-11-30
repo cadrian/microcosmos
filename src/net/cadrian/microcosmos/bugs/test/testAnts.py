@@ -147,6 +147,7 @@ class AntFemaleTestCase(unittest.TestCase):
         self.assertNotEquals(ant, queen)
         self.assertEquals((2, 2), (queen.x, queen.y))
         self.assertEquals(AntQueen, queen.__class__)
+        self.assertEquals(ant._life, queen._life)
 
 
 class AntQueenTestCase(unittest.TestCase):
