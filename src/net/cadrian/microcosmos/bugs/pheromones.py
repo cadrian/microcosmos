@@ -14,8 +14,12 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 class PheromoneKind:
-    def __init__(self, diffusion):
+    def __init__(self, diffusion, name):
         self.diffusion = diffusion
+        self.name = name
+
+    def __str__(self):
+        return self.name
 
 
 class Pheromone:

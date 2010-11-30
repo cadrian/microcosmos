@@ -58,7 +58,7 @@ class AntFemaleTestCase(unittest.TestCase):
         self.grid.diffuse()
         self.grid.diffuse()
         ant.prepareToMove()
-        self.assertEquals("followingTarget", str(ant.state))
+        self.assertEquals("following target", str(ant.state))
 
     def test03(self):
         """ target reached => staying there """
@@ -90,7 +90,7 @@ class AntFemaleTestCase(unittest.TestCase):
         self.grid.diffuse()
         self.grid.diffuse()
         ant.prepareToMove()
-        self.assertEquals("followingTarget", str(ant.state))
+        self.assertEquals("following target", str(ant.state))
         ant.move()
         self.assertEquals((1, 1), (ant.x, ant.y))
         ant.prepareToMove()
@@ -220,7 +220,7 @@ class AntQueenTestCase(unittest.TestCase):
 
 
 class AntWorkerTestCase(unittest.TestCase):
-    from net.cadrian.microcosmos.bugs.antWorkers import TRAIL_HOME
+    from net.cadrian.microcosmos.bugs.antWorkers import TRAIL_HILL, TRAIL_FOOD, TRAIL_LICE
 
     def setUp(self):
         self.grid = Grid(5, 5)
@@ -233,7 +233,7 @@ class AntWorkerTestCase(unittest.TestCase):
         self.grid.put(1, 1, self.ant)
         self.ant.prepareToMove()
         self.grid.diffuse()
-        self.assertEquals(32, self.grid.scent(1, 1, self.TRAIL_HOME))
+        self.assertEquals(32, self.grid.scent(1, 1, self.TRAIL_HILL))
 
     def test01b(self):
         """ an ant moving from the hill leaves a trail -- the ant far from the hill """
@@ -241,16 +241,16 @@ class AntWorkerTestCase(unittest.TestCase):
         self.grid.put(0, 0, self.ant)
         self.ant.prepareToMove()
         self.grid.diffuse()
-        self.assertEquals(0, self.grid.scent(0, 0, self.TRAIL_HOME))
+        self.assertEquals(0, self.grid.scent(0, 0, self.TRAIL_HILL))
 
     def test01c(self):
         """ an ant moving from the hill leaves a trail -- the ant is far from the hill but marked as coming from it """
-        self.ant._setLeavingHome()
+        self.ant._setLeavingHill()
         self.grid.put(2, 2, self.queen)
         self.grid.put(0, 0, self.ant)
         self.ant.prepareToMove()
         self.grid.diffuse()
-        self.assertEquals(32, self.grid.scent(0, 0, self.TRAIL_HOME))
+        self.assertEquals(32, self.grid.scent(0, 0, self.TRAIL_HILL))
 
     def test01d(self):
         """ an ant moving from the hill leaves a trail -- the ant is getting far from the hill but moves from it """
@@ -258,15 +258,79 @@ class AntWorkerTestCase(unittest.TestCase):
         self.grid.put(1, 1, self.ant)
         self.ant.prepareToMove()
         self.grid.diffuse()
-        self.assertEquals(32, self.grid.scent(1, 1, self.TRAIL_HOME))
+        self.assertEquals(32, self.grid.scent(1, 1, self.TRAIL_HILL))
 
         self.ant.move()
         self.assert_(self.grid.bug(1, 1) is None)
-        self.assertEquals(self.ant, self.grid.bug(0, 0))
+        self.assertEquals(self.ant, self.grid.bug(self.ant.x, self.ant.y))
 
         self.ant.prepareToMove()
         self.grid.diffuse()
-        self.assertEquals(36, self.grid.scent(0, 0, self.TRAIL_HOME))
+        self.assertEquals(36, self.grid.scent(self.ant.x, self.ant.y, self.TRAIL_HILL))
+
+    def test02a(self):
+        """ when leaving hill, an ant will choose to explore by default """
+        self.ant._setLeavingHill()
+        self.grid.put(2, 2, self.queen)
+        self.grid.put(1, 1, self.ant)
+        self.ant.prepareToMove()
+        self.assertEquals("exploration", str(self.ant.state))
+
+    def test02b(self):
+        """ when leaving hill, an ant will choose to follow a trail to food if there is one """
+        self.ant._setLeavingHill()
+        self.grid.put(2, 2, self.queen)
+        self.grid.put(1, 1, self.ant)
+        self.grid._ensurePheromone(1, 2, self.TRAIL_FOOD, 8)
+        self.assertEquals(8, self.grid.scent(1, 2, self.TRAIL_FOOD))
+        self.ant.prepareToMove()
+        self.assertEquals("following food", str(self.ant.state))
+        self.ant.move()
+        self.assert_(self.grid.bug(1, 1) is None)
+        self.assertEquals(self.ant, self.grid.bug(1, 2))
+
+    def test02c(self):
+        """ when leaving hill, an ant will choose to follow a trail to lice if there is one """
+        self.ant._setLeavingHill()
+        self.grid.put(2, 2, self.queen)
+        self.grid.put(1, 1, self.ant)
+        self.grid._ensurePheromone(1, 2, self.TRAIL_LICE, 8)
+        self.assertEquals(8, self.grid.scent(1, 2, self.TRAIL_LICE))
+        self.ant.prepareToMove()
+        self.assertEquals("following lice", str(self.ant.state))
+        self.ant.move()
+        self.assert_(self.grid.bug(1, 1) is None)
+        self.assertEquals(self.ant, self.grid.bug(1, 2))
+
+    def test02d(self):
+        """ when leaving hill, an ant will choose to follow the strongest trail is there are both a food and a lice trails """
+        self.ant._setLeavingHill()
+        self.grid.put(2, 2, self.queen)
+        self.grid.put(1, 1, self.ant)
+        self.grid._ensurePheromone(1, 2, self.TRAIL_LICE, 8)
+        self.grid._ensurePheromone(1, 0, self.TRAIL_FOOD, 16)
+        self.assertEquals(8, self.grid.scent(1, 2, self.TRAIL_LICE))
+        self.ant.prepareToMove()
+        self.assertEquals("following food", str(self.ant.state))
+        self.ant.move()
+        self.assert_(self.grid.bug(1, 1) is None)
+        self.assert_(self.grid.bug(1, 2) is None)
+        self.assertEquals(self.ant, self.grid.bug(1, 0))
+
+    def test02e(self):
+        """ when leaving hill, an ant will choose to follow the lice trail over the food trail if both trails have the same strength """
+        self.ant._setLeavingHill()
+        self.grid.put(2, 2, self.queen)
+        self.grid.put(1, 1, self.ant)
+        self.grid._ensurePheromone(1, 2, self.TRAIL_LICE, 8)
+        self.grid._ensurePheromone(1, 0, self.TRAIL_FOOD, 8)
+        self.assertEquals(8, self.grid.scent(1, 2, self.TRAIL_LICE))
+        self.ant.prepareToMove()
+        self.assertEquals("following lice", str(self.ant.state))
+        self.ant.move()
+        self.assert_(self.grid.bug(1, 1) is None)
+        self.assert_(self.grid.bug(1, 0) is None)
+        self.assertEquals(self.ant, self.grid.bug(1, 2))
 
 
 if __name__ == "__main__":
