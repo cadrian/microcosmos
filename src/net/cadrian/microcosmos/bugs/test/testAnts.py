@@ -236,7 +236,7 @@ class AntWorkerTestCase(unittest.TestCase):
         self.assertEquals(32, self.grid.scent(1, 1, self.TRAIL_HOME))
 
     def test01b(self):
-        """ an ant moving from the hill leaves a trail -- ant outside the hill """
+        """ an ant moving from the hill leaves a trail -- the ant far from the hill """
         self.grid.put(2, 2, self.queen)
         self.grid.put(0, 0, self.ant)
         self.ant.prepareToMove()
@@ -244,13 +244,29 @@ class AntWorkerTestCase(unittest.TestCase):
         self.assertEquals(0, self.grid.scent(0, 0, self.TRAIL_HOME))
 
     def test01c(self):
-        """ an ant moving from the hill leaves a trail -- ant out of the fill but marked as coming from it """
+        """ an ant moving from the hill leaves a trail -- the ant is far from the hill but marked as coming from it """
         self.ant._setLeavingHome()
         self.grid.put(2, 2, self.queen)
         self.grid.put(0, 0, self.ant)
         self.ant.prepareToMove()
         self.grid.diffuse()
         self.assertEquals(32, self.grid.scent(0, 0, self.TRAIL_HOME))
+
+    def test01d(self):
+        """ an ant moving from the hill leaves a trail -- the ant is getting far from the hill but moves from it """
+        self.grid.put(2, 2, self.queen)
+        self.grid.put(1, 1, self.ant)
+        self.ant.prepareToMove()
+        self.grid.diffuse()
+        self.assertEquals(32, self.grid.scent(1, 1, self.TRAIL_HOME))
+
+        self.ant.move()
+        self.assert_(self.grid.bug(1, 1) is None)
+        self.assertEquals(self.ant, self.grid.bug(0, 0))
+
+        self.ant.prepareToMove()
+        self.grid.diffuse()
+        self.assertEquals(36, self.grid.scent(0, 0, self.TRAIL_HOME))
 
 
 if __name__ == "__main__":
