@@ -248,7 +248,7 @@ class AntWorkerTestCase(unittest.TestCase):
 
     def test01c(self):
         """ an ant moving from the hill leaves a trail -- note; the hill is the square around the queen -- ant out of the fill but marked as coming from it """
-        self.ant.setLeavingHome()
+        self.ant._setLeavingHome()
         self.grid.put(2, 2, self.queen)
         self.grid.put(0, 0, self.ant)
         self.ant.prepareToMove()

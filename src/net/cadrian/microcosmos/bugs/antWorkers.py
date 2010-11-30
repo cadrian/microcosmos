@@ -25,6 +25,12 @@ _LOGGER = getLogger(__name__)
 
 
 TRAIL_HOME = PheromoneKind(0.125)
+TRAIL_FOOD = PheromoneKind(0.25)
+TRAIL_LICE = PheromoneKind(0.25)
+
+SCENT_HOME = Pheromone(TRAIL_HOME, 32)
+SCENT_FOOD = Pheromone(TRAIL_FOOD, 16)
+SCENT_LICE = Pheromone(TRAIL_LICE, 16)
 
 
 class Explore:
@@ -39,21 +45,23 @@ class Explore:
 class AntWorker(AbstractAnt):
     def __init__(self, grid, life=100):
         AbstractAnt.__init__(self, grid, life=life)
-        self._trailHome = Pheromone(TRAIL_HOME, 32)
         self.pheromones = set()
         self.state = None
 
     def prepareToMove(self):
+        self._checkHill()
+        self.state = Explore(self)
+
+    def _checkHill(self):
         def add(x, y):
             x.add(y)
             return x
         bugs = reduce(add, [self.grid.bug(x, y).__class__ for x, y in self.grid.square(self.x, self.y)], set())
         if AntQueen in bugs:
-            self.setLeavingHome()
-        self.state = Explore(self)
+            self._setLeavingHome()
 
-    def setLeavingHome(self):
-        self.pheromones.add(self._trailHome)
+    def _setLeavingHome(self):
+        self.pheromones.add(SCENT_HOME)
 
     def move(self):
         self.state.move()
