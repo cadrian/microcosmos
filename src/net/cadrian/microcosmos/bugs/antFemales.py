@@ -110,21 +110,17 @@ class Dead:
 
 class AntFemale(AbstractAnt):
     def __init__(self, grid, antPromotion=AntQueen, life=100, randomizer=None):
-        AbstractAnt.__init__(self, grid)
+        AbstractAnt.__init__(self, grid, life=life)
         self._randomizer = randomizer or Randomizer()
         self.pheromones = []
         self.state = None
         self.target = None
-        self._life = life
         self._antPromotion = antPromotion
 
     def goToTarget(self, target):
         self.target = target
 
     def canFly(self):
-        return True
-
-    def isAlive(self):
         return True
 
     def prepareToMove(self):

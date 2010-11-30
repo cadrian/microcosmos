@@ -48,15 +48,11 @@ class LandscapeVisitor:
 
 class AntQueen(AbstractAnt):
     def __init__(self, grid, life=100, nextPosition=None, nextAnt=None):
-        AbstractAnt.__init__(self, grid)
+        AbstractAnt.__init__(self, grid, life=life)
         self.pheromones = []
-        self._life = life
         self._next = None
         self._nextPositionFactory = nextPosition or randomNextPosition
         self._nextAntFactory = nextAnt or randomNextAnt
-
-    def isAlive(self):
-        return True
 
     def isDead(self):
         return self._life == 0
