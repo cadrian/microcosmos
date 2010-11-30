@@ -228,7 +228,7 @@ class AntWorkerTestCase(unittest.TestCase):
         self.ant = AntWorker(self.grid)
 
     def test01a(self):
-        """ an ant moving from the hill leaves a trail -- note; the hill is the square around the queen -- ant in the hill """
+        """ an ant moving from the hill leaves a trail -- note: the hill is the square around the queen """
         self.grid.put(2, 2, self.queen)
         self.grid.put(1, 1, self.ant)
         self.ant.prepareToMove()
@@ -236,7 +236,7 @@ class AntWorkerTestCase(unittest.TestCase):
         self.assertEquals(32, self.grid.scent(1, 1, self.TRAIL_HOME))
 
     def test01b(self):
-        """ an ant moving from the hill leaves a trail -- note; the hill is the square around the queen -- ant outside the hill """
+        """ an ant moving from the hill leaves a trail -- ant outside the hill """
         self.grid.put(2, 2, self.queen)
         self.grid.put(0, 0, self.ant)
         self.ant.prepareToMove()
@@ -244,7 +244,7 @@ class AntWorkerTestCase(unittest.TestCase):
         self.assertEquals(0, self.grid.scent(0, 0, self.TRAIL_HOME))
 
     def test01c(self):
-        """ an ant moving from the hill leaves a trail -- note; the hill is the square around the queen -- ant out of the fill but marked as coming from it """
+        """ an ant moving from the hill leaves a trail -- ant out of the fill but marked as coming from it """
         self.ant._setLeavingHome()
         self.grid.put(2, 2, self.queen)
         self.grid.put(0, 0, self.ant)
