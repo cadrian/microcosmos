@@ -49,18 +49,12 @@ class Bug(LocatedObject):
         LocatedObject.__init__(self, grid)
         self.pheromones = [Pheromone(kind=pheromoneKind, value=pheromoneValue)]
 
-    def allowTogether(self, other):
-        return False
-
 
 class Wall(LocatedObject):
     """ Walls block pheromones """
     def __init__(self, grid, pheromoneKind):
         LocatedObject.__init__(self, grid)
         self.pheromones = [AntiPheromone(kind=pheromoneKind, diffusion=0)]
-
-    def allowTogether(self, other):
-        return False
 
 
 class Pond(LocatedObject):
@@ -231,23 +225,21 @@ class DiffusionTestCase(unittest.TestCase):
         grid.remove(2, 2, bug)
         self.assertEquals((None, None), (bug.x, bug.y))
 
-    def test07a(self):
-        """ some objects cannot be in the same cell at the same time"""
+    def test07(self):
+        """ the movement can be caught (e.g. by a PySGE behaviour for smooth transition) """
 
-        grid = Grid(5, 5)
-        wall1 = Wall(grid, pheromoneKind=PHEROMONE)
-        grid.put(2, 2, wall1)
+        moves = []
+        def mover(*arg):
+            moves.append(arg)
+        grid = Grid(5, 5, mover=mover)
         bug = Bug(grid, pheromoneKind=PHEROMONE, pheromoneValue=4)
-        self.assertFalse(grid.allowMove(2, 2, bug))
-
-    def test07b(self):
-        """ some objects cannot be in the same cell at the same time - forcing move raises an exception"""
-
-        grid = Grid(5, 5)
-        wall1 = Wall(grid, pheromoneKind=PHEROMONE)
-        grid.put(2, 2, wall1)
-        bug = Bug(grid, pheromoneKind=PHEROMONE, pheromoneValue=4)
-        self.assertRaises(MoveError, grid.put, 2, 2, bug)
+        grid.put(2, 2, bug)
+        grid.move(3, 4, bug)
+        self.assertEquals(1, len(moves))
+        self.assertEquals((3, 4, bug), moves[0])
+        self.assertEquals(2,  bug.x)
+        self.assertEquals(2, bug.y)
+        self.assertTrue(grid.has(2, 2, bug))
 
 
 if __name__ == "__main__":

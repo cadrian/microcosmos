@@ -20,9 +20,6 @@ class LandscapeFeature(LocatedObject):
     def __init__(self, grid):
         LocatedObject.__init__(self, grid)
 
-    def allowTogether(self, other):
-        return True
-
 
 class Grass(LandscapeFeature):
     pass
@@ -37,10 +34,8 @@ class Soil(LandscapeFeature):
 
 
 class Wall(LandscapeFeature):
-    def allowTogether(self, other):
-        return other.canFly()
+    pass
 
 
 class Water(LandscapeFeature):
-    def allowTogether(self, other):
-        return other.canSwim() or other.canFly()
+    pass

@@ -143,9 +143,9 @@ class AntFemaleTestCase(unittest.TestCase):
         self.grid.diffuse()
         ant.prepareToMove()
         self.assertEquals("foundTarget", str(ant.state))
-        ant.move()
-        queen = self.grid.bug(2, 2)
+        queen = ant.move()
         self.assertNotEquals(ant, queen)
+        self.assertTrue(self.grid.has(2, 2, queen))
         self.assertEquals((2, 2), (queen.x, queen.y))
         self.assertEquals(AntQueen, queen.__class__)
         self.assertEquals(ant._life, queen._life)
@@ -159,7 +159,7 @@ class AntQueenTestCase(unittest.TestCase):
     def test01a(self):
         """ a queen that does not produce an ant does not lose life points """
         self.ant._next = None
-        self.assert_(self.ant._createNext() is None)
+        self.assertTrue(self.ant._createNext() is None)
         self.assertEquals(10, self.ant._life)
 
     def test01b(self):
@@ -174,49 +174,51 @@ class AntQueenTestCase(unittest.TestCase):
         self.ant._life = 3
         self.ant._cost = 3
         self.ant._next = lambda grid: AntFemale(grid)
-        self.assert_(self.ant._createNext() is None)
+        self.assertTrue(self.ant._createNext() is None)
         self.assertEquals(3, self.ant._life)
 
     def test02a(self):
         """ a queen can produce ants on soil """
         self.grid.put(2, 2, Soil(self.grid))
         self.grid.put(2, 2, self.ant)
-        self.assert_(self.ant._next is None)
+        self.assertTrue(self.ant._next is None)
         self.ant.prepareToMove()
-        self.assert_(self.ant._next is not None)
-        self.ant.move()
-        self.assertEquals(AntFemale, self.grid.bug(1, 1).__class__)
+        self.assertTrue(self.ant._next is not None)
+        newAnt = self.ant.move()
+        self.assertTrue(isinstance(newAnt, AntFemale))
+        self.assertTrue(self.grid.has(1, 1, newAnt))
 
     def test02b(self):
         """ a queen can produce ants on grass """
         self.grid.put(2, 2, Grass(self.grid))
         self.grid.put(2, 2, self.ant)
-        self.assert_(self.ant._next is None)
+        self.assertTrue(self.ant._next is None)
         self.ant.prepareToMove()
-        self.assert_(self.ant._next is not None)
-        self.ant.move()
-        self.assertEquals(AntFemale, self.grid.bug(1, 1).__class__)
+        self.assertTrue(self.ant._next is not None)
+        newAnt = self.ant.move()
+        self.assertTrue(isinstance(newAnt, AntFemale))
+        self.assertTrue(self.grid.has(1, 1, newAnt))
 
     def test02c(self):
         """ a queen cannot produce ants on sand """
         self.grid.put(2, 2, Sand(self.grid))
         self.grid.put(2, 2, self.ant)
-        self.assert_(self.ant._next is None)
+        self.assertTrue(self.ant._next is None)
         self.ant.prepareToMove()
-        self.assert_(self.ant._next is None)
-        self.ant.move()
-        self.assert_(self.grid.bug(1, 1) is None)
+        self.assertTrue(self.ant._next is None)
+        newAnt = self.ant.move()
+        self.assertTrue(newAnt is None)
 
     def test03(self):
         """ a dead queen produces nothing """
         self.grid.put(2, 2, Grass(self.grid))
         self.grid.put(2, 2, self.ant)
-        self.assert_(self.ant._next is None)
+        self.assertTrue(self.ant._next is None)
         self.ant._life = 0
         self.ant.prepareToMove()
-        self.assert_(self.ant._next is None)
-        self.ant.move()
-        self.assert_(self.grid.bug(1, 1) is None)
+        self.assertTrue(self.ant._next is None)
+        newAnt = self.ant.move()
+        self.assertTrue(newAnt is None)
 
 
 class AntWorkerTestCase(unittest.TestCase):
@@ -261,8 +263,8 @@ class AntWorkerTestCase(unittest.TestCase):
         self.assertEquals(32, self.grid.scent(1, 1, self.TRAIL_HILL))
 
         self.ant.move()
-        self.assert_(self.grid.bug(1, 1) is None)
-        self.assertEquals(self.ant, self.grid.bug(self.ant.x, self.ant.y))
+        self.assertFalse(self.grid.has(1, 1, self.ant))
+        self.assertTrue(self.grid.has(self.ant.x, self.ant.y, self.ant))
 
         self.ant.prepareToMove()
         self.grid.diffuse()
@@ -286,8 +288,8 @@ class AntWorkerTestCase(unittest.TestCase):
         self.ant.prepareToMove()
         self.assertEquals("following food", str(self.ant.state))
         self.ant.move()
-        self.assert_(self.grid.bug(1, 1) is None)
-        self.assertEquals(self.ant, self.grid.bug(1, 2))
+        self.assertFalse(self.grid.has(1, 1, self.ant))
+        self.assertTrue(self.grid.has(1, 2, self.ant))
 
     def test02c(self):
         """ when leaving hill, an ant will choose to follow a trail to lice if there is one """
@@ -299,8 +301,8 @@ class AntWorkerTestCase(unittest.TestCase):
         self.ant.prepareToMove()
         self.assertEquals("following lice", str(self.ant.state))
         self.ant.move()
-        self.assert_(self.grid.bug(1, 1) is None)
-        self.assertEquals(self.ant, self.grid.bug(1, 2))
+        self.assertFalse(self.grid.has(1, 1, self.ant))
+        self.assertTrue(self.grid.has(1, 2, self.ant))
 
     def test02d(self):
         """ when leaving hill, an ant will choose to follow the strongest trail is there are both a food and a lice trails """
@@ -313,9 +315,9 @@ class AntWorkerTestCase(unittest.TestCase):
         self.ant.prepareToMove()
         self.assertEquals("following food", str(self.ant.state))
         self.ant.move()
-        self.assert_(self.grid.bug(1, 1) is None)
-        self.assert_(self.grid.bug(1, 2) is None)
-        self.assertEquals(self.ant, self.grid.bug(1, 0))
+        self.assertFalse(self.grid.has(1, 1, self.ant))
+        self.assertFalse(self.grid.has(1, 2, self.ant))
+        self.assertTrue(self.grid.has(1, 0, self.ant))
 
     def test02e(self):
         """ when leaving hill, an ant will choose to follow the lice trail over the food trail if both trails have the same strength """
@@ -328,9 +330,9 @@ class AntWorkerTestCase(unittest.TestCase):
         self.ant.prepareToMove()
         self.assertEquals("following lice", str(self.ant.state))
         self.ant.move()
-        self.assert_(self.grid.bug(1, 1) is None)
-        self.assert_(self.grid.bug(1, 0) is None)
-        self.assertEquals(self.ant, self.grid.bug(1, 2))
+        self.assertFalse(self.grid.has(1, 1, self.ant))
+        self.assertFalse(self.grid.has(1, 0, self.ant))
+        self.assertTrue(self.grid.has(1, 2, self.ant))
 
 
 if __name__ == "__main__":

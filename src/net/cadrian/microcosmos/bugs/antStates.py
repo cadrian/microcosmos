@@ -28,9 +28,9 @@ class Exploration:
         return "exploration"
 
     def move(self):
-        x, y = self.ant.findEmptyCell()
-        if x or y:
-            self.ant.moveTo(x, y)
+        x, y = self.ant.getRandomTarget()
+        self.ant.moveTo(x, y)
+        return self.ant
 
 
 class FollowingScent:
@@ -46,6 +46,7 @@ class FollowingScent:
 
     def move(self):
         self.ant.moveTo(self._x, self._y)
+        return self.ant
 
 
 class FoundTarget:
@@ -62,10 +63,13 @@ class FoundTarget:
         return "foundTarget"
 
     def move(self):
+        ant = self.ant
         self.grid.accept(self.x, self.y, self)
         if self.promote:
-            self.grid.remove(self.x, self.y, self.ant)
-            self.grid.put(self.x, self.y, self.antPromotion(self.grid, life=self.ant._life))
+            self.grid.remove(self.x, self.y, ant)
+            ant = self.antPromotion(self.grid, life=ant._life)
+            self.grid.put(self.x, self.y, ant)
+        return ant
 
     def visitSoil(self, soil):
         self.promote = True

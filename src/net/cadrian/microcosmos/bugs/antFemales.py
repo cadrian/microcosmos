@@ -28,9 +28,6 @@ class Target(LocatedObject):
         self.pheromone = Pheromone(TARGET_PHEROMONE_KIND, 16)
         self.pheromones = [self.pheromone]
 
-    def allowTogether(self, other):
-        return True
-
 
 class AntFemale(AbstractAnt):
     def __init__(self, grid, antPromotion=AntQueen, life=100, randomizer=None):
@@ -62,7 +59,7 @@ class AntFemale(AbstractAnt):
                 self.state = FollowingScent(self, foundX, foundY, TARGET_PHEROMONE_KIND)
 
     def move(self):
-        self.state.move()
+        return self.state.move()
 
     def isDead(self):
         return self.state.dead

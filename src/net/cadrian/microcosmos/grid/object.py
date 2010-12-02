@@ -13,6 +13,9 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+import random
+
+
 class LocatedObject:
     def __init__(self, grid):
         self.x = None
@@ -42,3 +45,6 @@ class LocatedObject:
 
     def isAlive(self):
         return False
+
+    def getRandomTarget(self):
+        return random.choice(self.grid.square(self.x, self.y))

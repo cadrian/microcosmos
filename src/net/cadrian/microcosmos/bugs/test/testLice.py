@@ -43,13 +43,12 @@ class LouseTestCase(unittest.TestCase):
         self.grid.put(2, 2, self.louse)
         self.louse.prepareToMove()
         self.assertEquals(9, self.louse._life)
-        self.louse.move()
-        self.assertEquals(self.louse, self.grid.bug(2, 2))
-        lice = [(x,y) for x, y in self.grid.square(2, 2) if self.grid.bug(x, y).__class__ == Louse]
-        self.assertEquals(1, len(lice))
+        newLouse = self.louse.move()
+        self.assertTrue(self.grid.has(2, 2, self.louse))
         self.assertEquals(5, self.louse._life)
         self.assertEquals(0, self.louse._milk)
-        newLouse = self.grid.bug(*lice[0])
+        lice = [(x,y) for x, y in self.grid.square(2, 2) if self.grid.has(x, y, newLouse)]
+        self.assertEquals(1, len(lice))
         self.assertEquals(4, newLouse._life)
         self.assertEquals(0, newLouse._milk)
 
@@ -59,13 +58,12 @@ class LouseTestCase(unittest.TestCase):
         self.grid.put(2, 2, self.louse)
         self.louse.prepareToMove()
         self.assertEquals(9, self.louse._life)
-        self.louse.move()
-        self.assertEquals(self.louse, self.grid.bug(2, 2))
-        lice = [(x,y) for x, y in self.grid.square(2, 2) if self.grid.bug(x, y).__class__ == Louse]
-        self.assertEquals(1, len(lice))
+        newLouse = self.louse.move()
+        self.assertTrue(self.grid.has(2, 2, self.louse))
         self.assertEquals(5, self.louse._life)
         self.assertEquals(1, self.louse._milk)
-        newLouse = self.grid.bug(*lice[0])
+        lice = [(x,y) for x, y in self.grid.square(2, 2) if self.grid.has(x, y, newLouse)]
+        self.assertEquals(1, len(lice))
         self.assertEquals(4, newLouse._life)
         self.assertEquals(0, newLouse._milk)
 

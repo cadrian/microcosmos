@@ -61,6 +61,7 @@ class AntQueen(AbstractAnt):
             x, y = self._nextPositionFactory(square)
             self.grid.put(x, y, newborn)
         self._next = None
+        return newborn
 
     def _createNext(self):
         if self._next and self._cost < self._life:

@@ -49,9 +49,6 @@ class Louse(LocatedObject):
     def canSwim(self):
         return False
 
-    def allowTogether(self, other):
-        return not other.isAlive()
-
     def prepareToMove(self):
         self._life = self._life - 1
         if self._life > 0:
@@ -59,12 +56,14 @@ class Louse(LocatedObject):
             self.grid.accept(self.x, self.y, self._landscapeVisitor)
 
     def move(self):
+        louse = self
         if self._landscapeVisitor.canLive:
-            x, y = self.findEmptyCell()
-            if x or y:
-                life = self._life / 2
-                if life:
-                    self.grid.put(x, y, Louse(self.grid, life))
-                    self._life = self._life - life
+            x, y = self.getRandomTarget()
+            life = self._life / 2
+            if life:
+                louse = Louse(self.grid, life)
+                self.grid.put(x, y, louse)
+                self._life = self._life - life
             if self._landscapeVisitor.canMilk:
                 self._milk = self._milk + 1
+        return louse

@@ -56,18 +56,26 @@ class AntWorker(AbstractAnt):
                 self.state = Exploration(self)
 
     def _checkHill(self):
-        def add(x, y):
-            x.add(y)
-            return x
-        bugs = reduce(add, [self.grid.bug(x, y).__class__ for x, y in self.grid.square(self.x, self.y)], set())
-        if AntQueen in bugs:
-            self._setLeavingHill()
+
+        class AntQueenLookup:
+            def __init__(self):
+                self.foundQueen = False
+
+            def visitAntQueen(self, queen):
+                self.foundQueen = True
+
+        lookup = AntQueenLookup()
+        for x, y in self.grid.square(self.x, self.y):
+            self.grid.accept(x, y, lookup)
+            if lookup.foundQueen:
+                self._setLeavingHill()
+                return
 
     def _setLeavingHill(self):
         self.pheromones.add(SCENT_HILL)
 
     def move(self):
-        self.state.move()
+        return self.state.move()
 
     def isDead(self):
         return self.state.dead
