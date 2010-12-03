@@ -17,7 +17,14 @@ import unittest
 
 from net.cadrian.microcosmos.model.grid import Grid
 from net.cadrian.microcosmos.model.bugs import AntFemale, AntFemaleTarget, AntQueen, AntWorker
+from net.cadrian.microcosmos.model.bugs.antWorkers import SCENT_FOOD
 from net.cadrian.microcosmos.model.landscape import Grass, Sand, Soil
+from net.cadrian.microcosmos.model.grid import LocatedObject
+
+from pysge.utils.logger import getLogger
+
+
+_LOGGER = getLogger(__name__)
 
 
 NO_SPRITE = "no sprite"
@@ -26,6 +33,22 @@ NO_SPRITE = "no sprite"
 class DeterministRandomizer:
     def accept(self):
         return True
+
+
+class Food(LocatedObject):
+    """ Food has to be discovered """
+    def __init__(self, grid, store):
+        LocatedObject.__init__(self, grid, None)
+        self.pheromones = []
+        self.store = store
+
+
+class Louse(LocatedObject):
+    """ Lice have to be discovered """
+    def __init__(self, grid, milk):
+        LocatedObject.__init__(self, grid, None)
+        self.pheromones = []
+        self.milk = milk
 
 
 class AntFemaleTestCase(unittest.TestCase):
@@ -340,6 +363,60 @@ class AntWorkerTestCase(unittest.TestCase):
         self.assertFalse(self.grid.has(1, 1, self.ant))
         self.assertFalse(self.grid.has(1, 0, self.ant))
         self.assertTrue(self.grid.has(1, 2, self.ant))
+
+    def test03a(self):
+        """ when finding food, the ant takes some of it """
+        self.ant._setLeavingHill()
+        self.grid.put(2, 2, self.queen)
+        self.grid.put(0, 0, self.ant)
+        self.grid._ensurePheromone(1, 1, self.TRAIL_HILL, 8)
+        food = Food(self.grid, store=5)
+        self.grid.put(0, 0, food)
+        self.ant.prepareToMove()
+        self.assertEquals("storing food", str(self.ant.state))
+        self.ant.move()
+        self.assertTrue(self.grid.has(0, 0, self.ant))
+        self.assertTrue(self.ant._hasFood())
+        self.assertEquals(4, food.store)
+        self.ant.prepareToMove()
+        self.assertEquals("following hill", str(self.ant.state))
+        self.ant.move()
+        self.assertFalse(self.grid.has(0, 0, self.ant))
+        self.assertTrue(self.grid.has(1, 1, self.ant))
+
+    def test03b(self):
+        """ when finding lice, the ant milks them """
+        self.ant._setLeavingHill()
+        self.grid.put(2, 2, self.queen)
+        self.grid.put(0, 0, self.ant)
+        self.grid._ensurePheromone(1, 1, self.TRAIL_HILL, 8)
+        louse = Louse(self.grid, milk=5)
+        self.grid.put(0, 0, louse)
+        self.ant.prepareToMove()
+        self.assertEquals("storing milk", str(self.ant.state))
+        self.ant.move()
+        self.assertTrue(self.grid.has(0, 0, self.ant))
+        self.assertTrue(self.ant._hasFood())
+        self.assertEquals(4, louse.milk)
+        self.ant.prepareToMove()
+        self.assertEquals("following hill", str(self.ant.state))
+        self.ant.move()
+        self.assertFalse(self.grid.has(0, 0, self.ant))
+        self.assertTrue(self.grid.has(1, 1, self.ant))
+
+    def test04(self):
+        """ an ant tries to go home even when there is no trail to follow -- and it leaves a trail"""
+        self.grid.put(2, 2, self.queen)
+        self.grid.put(0, 0, self.ant)
+        self.grid.diffuse()
+        self.ant._setFood(SCENT_FOOD)
+        self.grid.diffuse()
+        self.ant.prepareToMove()
+        self.assertEquals("following queen", str(self.ant.state))
+        self.ant.move()
+        self.assertFalse(self.grid.has(0, 0, self.ant))
+        self.assertTrue(self.grid.has(1, 1, self.ant))
+        self.assertEquals(16, self.grid.scent(0, 0, SCENT_FOOD.kind))
 
 
 if __name__ == "__main__":

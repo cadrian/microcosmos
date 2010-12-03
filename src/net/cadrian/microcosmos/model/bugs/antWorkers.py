@@ -15,8 +15,8 @@
 #
 from net.cadrian.microcosmos.model.grid import LocatedObject
 from net.cadrian.microcosmos.model.bugs.ant import AbstractAnt
-from net.cadrian.microcosmos.model.bugs.antQueens import AntQueen
-from net.cadrian.microcosmos.model.bugs.antStates import Dead, Exploration, FollowingScent
+from net.cadrian.microcosmos.model.bugs.antQueens import AntQueen, QUEEN_PHEROMONE_KIND
+from net.cadrian.microcosmos.model.bugs.antStates import Dead, Exploration, FollowingScent, StoreFood
 from net.cadrian.microcosmos.model.bugs.pheromones import PheromoneKind, Pheromone
 
 from pysge.utils.logger import getLogger
@@ -39,21 +39,49 @@ class AntWorker(AbstractAnt):
         AbstractAnt.__init__(self, grid, sprite, life=life, randomizer=randomizer)
         self.pheromones = set()
         self.state = None
+        self._food = None
 
     def prepareToMove(self):
         self._life = self._life - 1
+        self.state = self._checkDead() or self._checkFood() or self._checkFoundFood() or self._checkHill() or Exploration(self)
+
+    def _checkDead(self):
         if self._life <= 0:
-            self.state = Dead(self)
-        else:
-            self._checkHill()
-            foodX, foodY, foodScent = self.findScent(TRAIL_FOOD)
-            liceX, liceY, liceScent = self.findScent(TRAIL_LICE)
-            if foodScent > liceScent:
-                self.state = FollowingScent(self, foodX, foodY, TRAIL_FOOD)
-            elif liceScent > 0:
-                self.state = FollowingScent(self, liceX, liceY, TRAIL_LICE)
+            return Dead(self)
+
+    def _checkFood(self):
+        if self._food is not None:
+            trailX, trailY, trailScent = self.findScent(TRAIL_HILL)
+            queenX, queenY, queenScent = self.findScent(QUEEN_PHEROMONE_KIND)
+            if trailScent > queenScent:
+                return FollowingScent(self, trailX, trailY, TRAIL_HILL)
             else:
-                self.state = Exploration(self)
+                return FollowingScent(self, queenX, queenY, QUEEN_PHEROMONE_KIND)
+
+    def _checkFoundFood(self):
+        host = self
+
+        class FoodLookup:
+            def __init__(self):
+                self.state = None
+
+            def visitFood(self, food):
+                if food.store > 0 and self.state is None:
+                    def takeFood():
+                        food.store = food.store - 1
+                        if food.store == 0:
+                            food.remove()
+                    self.state = StoreFood(host, takeFood, SCENT_FOOD)
+
+            def visitLouse(self, louse):
+                if louse.milk > 0:
+                    def milkLouse():
+                        louse.milk = louse.milk - 1
+                    self.state = StoreFood(host, milkLouse, SCENT_LICE, "milk")
+
+        lookup = FoodLookup()
+        self.grid.accept(self.x, self.y, lookup)
+        return lookup.state
 
     def _checkHill(self):
 
@@ -69,10 +97,26 @@ class AntWorker(AbstractAnt):
             self.grid.accept(x, y, lookup)
             if lookup.foundQueen:
                 self._setLeavingHill()
-                return
+
+        foodX, foodY, foodScent = self.findScent(TRAIL_FOOD)
+        liceX, liceY, liceScent = self.findScent(TRAIL_LICE)
+        if foodScent > liceScent:
+            return FollowingScent(self, foodX, foodY, TRAIL_FOOD)
+        elif liceScent > 0:
+            return FollowingScent(self, liceX, liceY, TRAIL_LICE)
 
     def _setLeavingHill(self):
         self.pheromones.add(SCENT_HILL)
+        self.pheromones.discard(SCENT_LICE)
+        self.pheromones.discard(SCENT_FOOD)
+
+    def _setFood(self, foodScent):
+        self.pheromones.discard(SCENT_HILL)
+        self._food = foodScent
+        self.pheromones.add(foodScent)
+
+    def _hasFood(self):
+        return self._food is not None
 
     def move(self):
         return self.state.move()

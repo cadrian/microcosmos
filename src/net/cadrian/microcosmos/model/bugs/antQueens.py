@@ -19,6 +19,8 @@ from net.cadrian.microcosmos.model.grid import LocatedObject
 from net.cadrian.microcosmos.model.bugs.ant import AbstractAnt
 from net.cadrian.microcosmos.model.bugs.pheromones import PheromoneKind, Pheromone
 
+QUEEN_PHEROMONE_KIND = PheromoneKind(0.25, "queen")
+
 
 def randomNextPosition(square):
     return random.choice(square)
@@ -38,7 +40,7 @@ class LandscapeVisitor:
 class AntQueen(AbstractAnt):
     def __init__(self, grid, sprite, life=100, nextPosition=None, nextAnt=None):
         AbstractAnt.__init__(self, grid, sprite, life=life)
-        self.pheromones = []
+        self.pheromones = [Pheromone(QUEEN_PHEROMONE_KIND, 64)]
         self._next = None
         self._nextPositionFactory = nextPosition or randomNextPosition
         self._nextAntFactory = nextAnt

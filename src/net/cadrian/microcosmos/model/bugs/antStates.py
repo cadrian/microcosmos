@@ -88,3 +88,18 @@ class Dead:
 
     def move(self):
         self.ant.remove()
+
+
+class StoreFood:
+    def __init__(self, bug, store, scent, label=None):
+        self._bug = bug
+        self._store = store
+        self._scent = scent
+        self._str = "storing %s" % (label or scent.kind)
+
+    def __str__(self):
+        return self._str
+
+    def move(self):
+        self._bug._setFood(self._scent)
+        self._store()
