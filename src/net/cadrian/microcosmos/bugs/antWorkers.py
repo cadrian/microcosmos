@@ -35,8 +35,8 @@ SCENT_LICE = Pheromone(TRAIL_LICE, 16)
 
 
 class AntWorker(AbstractAnt):
-    def __init__(self, grid, life=100, randomizer=None):
-        AbstractAnt.__init__(self, grid, life=life, randomizer=randomizer)
+    def __init__(self, grid, sprite, life=100, randomizer=None):
+        AbstractAnt.__init__(self, grid, sprite, life=life, randomizer=randomizer)
         self.pheromones = set()
         self.state = None
 

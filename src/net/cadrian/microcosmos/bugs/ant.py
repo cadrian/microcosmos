@@ -24,8 +24,8 @@ class Randomizer:
 
 
 class AbstractAnt(LocatedObject):
-    def __init__(self, grid, life, randomizer=None):
-        LocatedObject.__init__(self, grid)
+    def __init__(self, grid, sprite, life, randomizer=None):
+        LocatedObject.__init__(self, grid, sprite)
         self._randomizer = randomizer or Randomizer()
         self._life = life
 

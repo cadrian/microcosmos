@@ -15,7 +15,6 @@
 #
 from net.cadrian.microcosmos.grid import LocatedObject
 from net.cadrian.microcosmos.bugs.ant import AbstractAnt
-from net.cadrian.microcosmos.bugs.antQueens import AntQueen
 from net.cadrian.microcosmos.bugs.antStates import Dead, Exploration, FollowingScent, FoundTarget
 from net.cadrian.microcosmos.bugs.pheromones import PheromoneKind, Pheromone
 
@@ -23,15 +22,15 @@ TARGET_PHEROMONE_KIND = PheromoneKind(0.125, "target")
 
 
 class Target(LocatedObject):
-    def __init__(self, grid):
-        LocatedObject.__init__(self, grid)
+    def __init__(self, grid, sprite):
+        LocatedObject.__init__(self, grid, sprite)
         self.pheromone = Pheromone(TARGET_PHEROMONE_KIND, 16)
         self.pheromones = [self.pheromone]
 
 
 class AntFemale(AbstractAnt):
-    def __init__(self, grid, antPromotion=AntQueen, life=100, randomizer=None):
-        AbstractAnt.__init__(self, grid, life=life, randomizer=randomizer)
+    def __init__(self, grid, sprite, antPromotion, life=100, randomizer=None):
+        AbstractAnt.__init__(self, grid, sprite, life=life, randomizer=randomizer)
         self.pheromones = []
         self.state = None
         self.target = None

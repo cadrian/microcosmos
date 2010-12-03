@@ -17,8 +17,8 @@ from net.cadrian.microcosmos.grid import LocatedObject
 
 
 class LandscapeFeature(LocatedObject):
-    def __init__(self, grid):
-        LocatedObject.__init__(self, grid)
+    def __init__(self, grid, sprite=None):
+        LocatedObject.__init__(self, grid, sprite)
 
 
 class Grass(LandscapeFeature):

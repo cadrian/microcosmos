@@ -36,8 +36,8 @@ class LandscapeVisitor:
 
 
 class AntQueen(AbstractAnt):
-    def __init__(self, grid, life=100, nextPosition=None, nextAnt=None):
-        AbstractAnt.__init__(self, grid, life=life)
+    def __init__(self, grid, sprite, life=100, nextPosition=None, nextAnt=None):
+        AbstractAnt.__init__(self, grid, sprite, life=life)
         self.pheromones = []
         self._next = None
         self._nextPositionFactory = nextPosition or randomNextPosition
@@ -65,6 +65,6 @@ class AntQueen(AbstractAnt):
 
     def _createNext(self):
         if self._next and self._cost < self._life:
-            result = self._next(self.grid)
+            result = self._next()
             self._life = self._life - self._cost
             return result

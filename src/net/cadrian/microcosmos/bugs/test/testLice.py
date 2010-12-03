@@ -25,10 +25,15 @@ from pysge.utils.logger import getLogger
 _LOGGER = getLogger(__name__)
 
 
+NO_SPRITE = "no sprite"
+
+
 class LouseTestCase(unittest.TestCase):
     def setUp(self):
         self.grid = Grid(5, 5)
-        self.louse = Louse(self.grid, life=10)
+        def louseFactory(life):
+            return Louse(self.grid, NO_SPRITE, louseFactory, life=life)
+        self.louse = louseFactory(life=10)
 
     def test01a(self):
         """ lice just die on sand; they don't produce milk """

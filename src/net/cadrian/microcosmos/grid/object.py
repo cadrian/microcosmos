@@ -17,10 +17,11 @@ import random
 
 
 class LocatedObject:
-    def __init__(self, grid):
+    def __init__(self, grid, sprite):
         self.x = None
         self.y = None
         self.grid = grid
+        self.sprite = sprite
         self.pheromones = []
 
     def accept(self, visitor):

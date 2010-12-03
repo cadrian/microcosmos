@@ -35,10 +35,11 @@ class LandscapeVisitor:
 
 
 class Louse(LocatedObject):
-    def __init__(self, grid, life):
-        LocatedObject.__init__(self, grid)
+    def __init__(self, grid, sprite, factory, life):
+        LocatedObject.__init__(self, grid, sprite)
         self._life = life
         self._milk = 0
+        self._factory = factory
 
     def isAlive(self):
         return True
@@ -61,7 +62,7 @@ class Louse(LocatedObject):
             x, y = self.getRandomTarget()
             life = self._life / 2
             if life:
-                louse = Louse(self.grid, life)
+                louse = self._factory(life)
                 self.grid.put(x, y, louse)
                 self._life = self._life - life
             if self._landscapeVisitor.canMilk:

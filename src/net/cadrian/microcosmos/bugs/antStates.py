@@ -67,7 +67,7 @@ class FoundTarget:
         self.grid.accept(self.x, self.y, self)
         if self.promote:
             self.grid.remove(self.x, self.y, ant)
-            ant = self.antPromotion(self.grid, life=ant._life)
+            ant = self.antPromotion(life=ant._life)
             self.grid.put(self.x, self.y, ant)
         return ant
 

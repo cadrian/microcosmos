@@ -20,6 +20,9 @@ from net.cadrian.microcosmos.bugs import AntFemale, AntFemaleTarget, AntQueen, A
 from net.cadrian.microcosmos.landscape import Grass, Sand, Soil
 
 
+NO_SPRITE = "no sprite"
+
+
 class DeterministRandomizer:
     def accept(self):
         return True
@@ -31,7 +34,7 @@ class AntFemaleTestCase(unittest.TestCase):
 
     def test01a(self):
         """ no target => exploration """
-        ant = AntFemale(self.grid, randomizer=DeterministRandomizer())
+        ant = AntFemale(self.grid, NO_SPRITE, None, randomizer=DeterministRandomizer())
         self.grid.put(2, 2, ant)
         self.grid.diffuse()
         ant.prepareToMove()
@@ -39,8 +42,8 @@ class AntFemaleTestCase(unittest.TestCase):
 
     def test01b(self):
         """ target not detected => exploration """
-        ant = AntFemale(self.grid, randomizer=DeterministRandomizer())
-        target = AntFemaleTarget(self.grid)
+        ant = AntFemale(self.grid, NO_SPRITE, None, randomizer=DeterministRandomizer())
+        target = AntFemaleTarget(self.grid, NO_SPRITE)
         self.grid.put(2, 2, ant)
         self.grid.put(0, 0, target)
         ant.goToTarget(target)
@@ -50,8 +53,8 @@ class AntFemaleTestCase(unittest.TestCase):
 
     def test02(self):
         """ target detected => following the scent """
-        ant = AntFemale(self.grid, randomizer=DeterministRandomizer())
-        target = AntFemaleTarget(self.grid)
+        ant = AntFemale(self.grid, NO_SPRITE, None, randomizer=DeterministRandomizer())
+        target = AntFemaleTarget(self.grid, NO_SPRITE)
         self.grid.put(2, 2, ant)
         self.grid.put(0, 0, target)
         ant.goToTarget(target)
@@ -62,8 +65,8 @@ class AntFemaleTestCase(unittest.TestCase):
 
     def test03(self):
         """ target reached => staying there """
-        ant = AntFemale(self.grid, randomizer=DeterministRandomizer())
-        target = AntFemaleTarget(self.grid)
+        ant = AntFemale(self.grid, NO_SPRITE, None, randomizer=DeterministRandomizer())
+        target = AntFemaleTarget(self.grid, NO_SPRITE)
         self.grid.put(2, 2, ant)
         self.grid.put(2, 2, target)
         ant.goToTarget(target)
@@ -72,7 +75,7 @@ class AntFemaleTestCase(unittest.TestCase):
 
     def test04(self):
         """ ant movement in exploration """
-        ant = AntFemale(self.grid, randomizer=DeterministRandomizer())
+        ant = AntFemale(self.grid, NO_SPRITE, None, randomizer=DeterministRandomizer())
         self.grid.put(2, 2, ant)
         self.grid.diffuse()
         ant.prepareToMove()
@@ -82,8 +85,8 @@ class AntFemaleTestCase(unittest.TestCase):
 
     def test05(self):
         """ ant movement in target follow """
-        ant = AntFemale(self.grid, randomizer=DeterministRandomizer())
-        target = AntFemaleTarget(self.grid)
+        ant = AntFemale(self.grid, NO_SPRITE, None, randomizer=DeterministRandomizer())
+        target = AntFemaleTarget(self.grid, NO_SPRITE)
         self.grid.put(2, 2, ant)
         self.grid.put(0, 0, target)
         ant.goToTarget(target)
@@ -99,8 +102,8 @@ class AntFemaleTestCase(unittest.TestCase):
 
     def test06(self):
         """ ant movement when target reached """
-        ant = AntFemale(self.grid, randomizer=DeterministRandomizer())
-        target = AntFemaleTarget(self.grid)
+        ant = AntFemale(self.grid, NO_SPRITE, None, randomizer=DeterministRandomizer())
+        target = AntFemaleTarget(self.grid, NO_SPRITE)
         self.grid.put(2, 2, ant)
         self.grid.put(2, 2, target)
         ant.goToTarget(target)
@@ -113,8 +116,8 @@ class AntFemaleTestCase(unittest.TestCase):
 
     def test07(self):
         """ ants die """
-        ant = AntFemale(self.grid, life=3, randomizer=DeterministRandomizer())
-        target = AntFemaleTarget(self.grid)
+        ant = AntFemale(self.grid, NO_SPRITE, None, life=3, randomizer=DeterministRandomizer())
+        target = AntFemaleTarget(self.grid, NO_SPRITE)
         self.grid.put(2, 2, ant)
         self.grid.put(2, 2, target)
         ant.goToTarget(target)
@@ -133,8 +136,10 @@ class AntFemaleTestCase(unittest.TestCase):
 
     def test08(self):
         """ a female that reaches its target on soil becomes a queen """
-        ant = AntFemale(self.grid, life=3, randomizer=DeterministRandomizer())
-        target = AntFemaleTarget(self.grid)
+        def promote(life):
+            return AntQueen(self.grid, NO_SPRITE, life=life)
+        ant = AntFemale(self.grid, NO_SPRITE, promote, life=3, randomizer=DeterministRandomizer())
+        target = AntFemaleTarget(self.grid, NO_SPRITE)
         self.grid.put(2, 2, Soil(self.grid))
         self.grid.put(2, 2, ant)
         self.grid.put(2, 2, target)
@@ -154,7 +159,9 @@ class AntFemaleTestCase(unittest.TestCase):
 class AntQueenTestCase(unittest.TestCase):
     def setUp(self):
         self.grid = Grid(5, 5)
-        self.ant = AntQueen(self.grid, life=10, nextPosition=lambda square: square[0], nextAnt=lambda: (AntFemale, 4))
+        def newAnt():
+            return AntFemale(self.grid, NO_SPRITE, None)
+        self.ant = AntQueen(self.grid, NO_SPRITE, life=10, nextPosition=lambda square: square[0], nextAnt=lambda: (newAnt, 4))
 
     def test01a(self):
         """ a queen that does not produce an ant does not lose life points """
@@ -164,7 +171,7 @@ class AntQueenTestCase(unittest.TestCase):
 
     def test01b(self):
         """ a queen that produces an ant loses some life """
-        self.ant._next = lambda grid: AntFemale(grid)
+        self.ant._next = lambda: AntFemale(self.grid, NO_SPRITE, None)
         self.ant._cost = 1
         self.assertEquals(AntFemale, self.ant._createNext().__class__)
         self.assertEquals(9, self.ant._life)
@@ -173,7 +180,7 @@ class AntQueenTestCase(unittest.TestCase):
         """ a queen with not enough life left will not produce the ant """
         self.ant._life = 3
         self.ant._cost = 3
-        self.ant._next = lambda grid: AntFemale(grid)
+        self.ant._next = lambda: AntFemale(self.grid, NO_SPRITE, None)
         self.assertTrue(self.ant._createNext() is None)
         self.assertEquals(3, self.ant._life)
 
@@ -226,8 +233,8 @@ class AntWorkerTestCase(unittest.TestCase):
 
     def setUp(self):
         self.grid = Grid(5, 5)
-        self.queen = AntQueen(self.grid)
-        self.ant = AntWorker(self.grid, randomizer=DeterministRandomizer())
+        self.queen = AntQueen(self.grid, NO_SPRITE)
+        self.ant = AntWorker(self.grid, NO_SPRITE, randomizer=DeterministRandomizer())
 
     def test01a(self):
         """ an ant moving from the hill leaves a trail -- note: the hill is the square around the queen """

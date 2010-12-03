@@ -46,21 +46,21 @@ class AntiPheromone:
 class Bug(LocatedObject):
     """ Bugs diffuse pheromones """
     def __init__(self, grid, pheromoneKind, pheromoneValue):
-        LocatedObject.__init__(self, grid)
+        LocatedObject.__init__(self, grid, None)
         self.pheromones = [Pheromone(kind=pheromoneKind, value=pheromoneValue)]
 
 
 class Wall(LocatedObject):
     """ Walls block pheromones """
     def __init__(self, grid, pheromoneKind):
-        LocatedObject.__init__(self, grid)
+        LocatedObject.__init__(self, grid, None)
         self.pheromones = [AntiPheromone(kind=pheromoneKind, diffusion=0)]
 
 
 class Pond(LocatedObject):
     """ Ponds slow the pheromones diffusion """
     def __init__(self, grid, pheromoneKind):
-        LocatedObject.__init__(self, grid)
+        LocatedObject.__init__(self, grid, None)
         self.pheromones = [AntiPheromone(kind=pheromoneKind, diffusion=0.25)]
 
 
