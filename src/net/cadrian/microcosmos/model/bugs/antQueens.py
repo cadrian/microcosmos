@@ -15,9 +15,9 @@
 #
 import random
 
-from net.cadrian.microcosmos.grid import LocatedObject
-from net.cadrian.microcosmos.bugs.ant import AbstractAnt
-from net.cadrian.microcosmos.bugs.pheromones import PheromoneKind, Pheromone
+from net.cadrian.microcosmos.model.grid import LocatedObject
+from net.cadrian.microcosmos.model.bugs.ant import AbstractAnt
+from net.cadrian.microcosmos.model.bugs.pheromones import PheromoneKind, Pheromone
 
 
 def randomNextPosition(square):

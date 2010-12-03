@@ -13,10 +13,10 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-from net.cadrian.microcosmos.grid import LocatedObject
-from net.cadrian.microcosmos.bugs.ant import AbstractAnt
-from net.cadrian.microcosmos.bugs.antStates import Dead, Exploration, FollowingScent, FoundTarget
-from net.cadrian.microcosmos.bugs.pheromones import PheromoneKind, Pheromone
+from net.cadrian.microcosmos.model.grid import LocatedObject
+from net.cadrian.microcosmos.model.bugs.ant import AbstractAnt
+from net.cadrian.microcosmos.model.bugs.antStates import Dead, Exploration, FollowingScent, FoundTarget
+from net.cadrian.microcosmos.model.bugs.pheromones import PheromoneKind, Pheromone
 
 TARGET_PHEROMONE_KIND = PheromoneKind(0.125, "target")
 

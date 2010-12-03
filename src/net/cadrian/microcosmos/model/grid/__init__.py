@@ -13,12 +13,5 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-from net.cadrian.microcosmos.grid import LocatedObject
-from net.cadrian.microcosmos.bugs.ant import AbstractAnt
-from net.cadrian.microcosmos.bugs.pheromones import PheromoneKind, Pheromone
-
-
-class AntSoldier(AbstractAnt):
-    def __init__(self, grid, sprite, life=100):
-        AbstractAnt.__init__(self, grid, sprite, life=life)
-        self.pheromones = []
+from net.cadrian.microcosmos.model.grid.grid import Grid, MoveError
+from net.cadrian.microcosmos.model.grid.object import LocatedObject

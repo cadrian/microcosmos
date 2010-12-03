@@ -15,9 +15,9 @@
 #
 import unittest
 
-from net.cadrian.microcosmos.grid import Grid
-from net.cadrian.microcosmos.bugs import AntFemale, AntFemaleTarget, AntQueen, AntWorker
-from net.cadrian.microcosmos.landscape import Grass, Sand, Soil
+from net.cadrian.microcosmos.model.grid import Grid
+from net.cadrian.microcosmos.model.bugs import AntFemale, AntFemaleTarget, AntQueen, AntWorker
+from net.cadrian.microcosmos.model.landscape import Grass, Sand, Soil
 
 
 NO_SPRITE = "no sprite"
@@ -229,7 +229,7 @@ class AntQueenTestCase(unittest.TestCase):
 
 
 class AntWorkerTestCase(unittest.TestCase):
-    from net.cadrian.microcosmos.bugs.antWorkers import TRAIL_HILL, TRAIL_FOOD, TRAIL_LICE
+    from net.cadrian.microcosmos.model.bugs.antWorkers import TRAIL_HILL, TRAIL_FOOD, TRAIL_LICE
 
     def setUp(self):
         self.grid = Grid(5, 5)

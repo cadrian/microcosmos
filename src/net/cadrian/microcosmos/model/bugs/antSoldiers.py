@@ -13,29 +13,12 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-from net.cadrian.microcosmos.grid import LocatedObject
+from net.cadrian.microcosmos.model.grid import LocatedObject
+from net.cadrian.microcosmos.model.bugs.ant import AbstractAnt
+from net.cadrian.microcosmos.model.bugs.pheromones import PheromoneKind, Pheromone
 
 
-class LandscapeFeature(LocatedObject):
-    def __init__(self, grid, sprite=None):
-        LocatedObject.__init__(self, grid, sprite)
-
-
-class Grass(LandscapeFeature):
-    pass
-
-
-class Sand(LandscapeFeature):
-    pass
-
-
-class Soil(LandscapeFeature):
-    pass
-
-
-class Wall(LandscapeFeature):
-    pass
-
-
-class Water(LandscapeFeature):
-    pass
+class AntSoldier(AbstractAnt):
+    def __init__(self, grid, sprite, life=100):
+        AbstractAnt.__init__(self, grid, sprite, life=life)
+        self.pheromones = []

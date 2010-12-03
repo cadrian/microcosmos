@@ -15,7 +15,7 @@
 #
 import unittest
 
-from net.cadrian.microcosmos.grid import Grid, LocatedObject, MoveError
+from net.cadrian.microcosmos.model.grid import Grid, LocatedObject, MoveError
 
 
 class PheromoneKind:

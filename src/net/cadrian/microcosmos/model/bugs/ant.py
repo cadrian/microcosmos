@@ -15,7 +15,7 @@
 #
 import random
 
-from net.cadrian.microcosmos.grid import LocatedObject
+from net.cadrian.microcosmos.model.grid import LocatedObject
 
 
 class Randomizer:

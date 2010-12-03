@@ -13,9 +13,29 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-from net.cadrian.microcosmos.bugs.antFemales import AntFemale, Target as AntFemaleTarget
-from net.cadrian.microcosmos.bugs.antQueens import AntQueen
-from net.cadrian.microcosmos.bugs.antSoldiers import AntSoldier
-from net.cadrian.microcosmos.bugs.antWorkers import AntWorker
+from net.cadrian.microcosmos.model.grid import LocatedObject
 
-from net.cadrian.microcosmos.bugs.lice import Louse
+
+class LandscapeFeature(LocatedObject):
+    def __init__(self, grid, sprite=None):
+        LocatedObject.__init__(self, grid, sprite)
+
+
+class Grass(LandscapeFeature):
+    pass
+
+
+class Sand(LandscapeFeature):
+    pass
+
+
+class Soil(LandscapeFeature):
+    pass
+
+
+class Wall(LandscapeFeature):
+    pass
+
+
+class Water(LandscapeFeature):
+    pass

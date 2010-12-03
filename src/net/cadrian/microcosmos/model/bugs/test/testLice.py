@@ -15,9 +15,9 @@
 #
 import unittest
 
-from net.cadrian.microcosmos.grid import Grid
-from net.cadrian.microcosmos.bugs import Louse
-from net.cadrian.microcosmos.landscape import Grass, Sand, Soil
+from net.cadrian.microcosmos.model.grid import Grid
+from net.cadrian.microcosmos.model.bugs import Louse
+from net.cadrian.microcosmos.model.landscape import Grass, Sand, Soil
 
 from pysge.utils.logger import getLogger
 
