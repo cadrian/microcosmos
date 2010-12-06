@@ -2,6 +2,7 @@
 
 echo
 exec find . -name 'test*.py' \
+    -exec grep -q 'unittest.main()' {} \; \
     -exec echo "======================================================================" \; \
     -exec echo "Now running " {} \; \
     -exec echo \; \
