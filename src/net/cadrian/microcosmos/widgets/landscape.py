@@ -13,6 +13,10 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+"""
+The landscape tiles.
+"""
+
 from pysge.facade import PySGE
 from pysge.objects.base import BasicSprite
 from pysge.utils.data import DataContainer

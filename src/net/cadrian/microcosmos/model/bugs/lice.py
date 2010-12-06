@@ -13,6 +13,10 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+"""
+Plant lice: herded and milked by ants.
+"""
+
 from net.cadrian.microcosmos.model.grid import LocatedObject
 
 from pysge.utils.logger import getLogger

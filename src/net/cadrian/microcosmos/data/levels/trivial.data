@@ -21,6 +21,8 @@ grid = grid(
             tilesRect=((50, 50), (50, 50)),
         ),
     ),
-)
 
-queen = redAntQueen(position=(10, 10))
+    bugs=(
+        redAntQueen(position=(10, 10)),
+    ),
+)

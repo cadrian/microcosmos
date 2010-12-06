@@ -13,4 +13,8 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+"""
+Landscape elements to be added to grid cells.
+"""
+
 from net.cadrian.microcosmos.model.landscape.objects import Grass, Sand, Soil, Wall, Water

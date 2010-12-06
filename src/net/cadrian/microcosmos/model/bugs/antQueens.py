@@ -13,6 +13,10 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+"""
+Ant queens: technically speaking, they are "ant factories". They breed new ants.
+"""
+
 import random
 
 from net.cadrian.microcosmos.model.grid import LocatedObject

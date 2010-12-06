@@ -13,6 +13,11 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+"""
+Ant workers: feed the queen for her to breed new ants. They gather
+food and milk plant lice.
+"""
+
 from net.cadrian.microcosmos.model.grid import LocatedObject
 from net.cadrian.microcosmos.model.bugs.ant import AbstractAnt
 from net.cadrian.microcosmos.model.bugs.antQueens import AntQueen, QUEEN_PHEROMONE_KIND

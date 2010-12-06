@@ -13,6 +13,10 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+"""
+The Bugs model package provides bugs and their specific behaviour.
+"""
+
 from net.cadrian.microcosmos.model.bugs.antFemales import AntFemale, Target as AntFemaleTarget
 from net.cadrian.microcosmos.model.bugs.antQueens import AntQueen
 from net.cadrian.microcosmos.model.bugs.antSoldiers import AntSoldier

@@ -13,3 +13,10 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+"""
+Microcosmos is a game where the player strategically assigns
+objectives for their ant colonies to attain.
+
+Each ant lives its own life, taking into account the overall strategy
+plan laid by the player.
+"""

@@ -13,5 +13,9 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+"""
+The Grid model provides a universe for the bugs to live in.
+"""
+
 from net.cadrian.microcosmos.model.grid.grid import Grid, MoveError
 from net.cadrian.microcosmos.model.grid.object import LocatedObject

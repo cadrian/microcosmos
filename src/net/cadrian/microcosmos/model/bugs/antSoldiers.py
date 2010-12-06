@@ -13,6 +13,10 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+"""
+Ant soldiers: the hill's gardians, they attack ennemy ants.
+"""
+
 from net.cadrian.microcosmos.model.grid import LocatedObject
 from net.cadrian.microcosmos.model.bugs.ant import AbstractAnt
 from net.cadrian.microcosmos.model.bugs.pheromones import PheromoneKind, Pheromone

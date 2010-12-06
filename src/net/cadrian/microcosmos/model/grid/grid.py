@@ -13,22 +13,11 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#
-# Grid          contains many Cells
-#
-# Cell          contains many _objects ([Object])
-#                    and many _scents ({PheromoneKind -> Scent})
-#
-# Scent         contains  one kind (PheromoneKind)
-#                    and  one value (float)
-#
-# Object        contains many pheromones ([Pheromone])
-#
-# Pheromone     contains  one value (float)
-#                    and  one kind (PheromoneKind)
-#
-# PheromoneKind contains  one diffusion (float)
-#
+"""
+The grid provides the framework universe: cells for the bugs to go to,
+smells for the pheromones to diffuse...
+"""
+
 
 def coordinates(width, height):
     for x in range(width):

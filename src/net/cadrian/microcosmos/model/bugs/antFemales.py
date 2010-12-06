@@ -13,6 +13,11 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+"""
+Female ants: fly away from the ant hill to an assigned target; then
+become a queen if they end up on good soil (or grass).
+"""
+
 from net.cadrian.microcosmos.model.grid import LocatedObject
 from net.cadrian.microcosmos.model.bugs.ant import AbstractAnt
 from net.cadrian.microcosmos.model.bugs.antStates import Dead, Exploration, FollowingScent, FoundTarget

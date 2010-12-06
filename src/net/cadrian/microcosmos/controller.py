@@ -13,7 +13,12 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+"""
+The game controller.
+"""
+
 import os
+
 from pysge.dataModel.data import DataFile
 from pysge.controllers.base import AbstractController
 from pysge.utils.logger import getLogger
