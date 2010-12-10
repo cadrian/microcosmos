@@ -15,33 +15,35 @@
 #
 import inspect
 
+
 class ContractException(Exception): pass
 
 
-def checkAssertion(instance, tag, assertion, locals):
+def checkAssertion(instance, tag, assertion, globals, locals):
     if callable(assertion):
         if assertion(instance):
             return None
         return tag
+
     try:
         assertionLocals = {"self": instance}
         assertionLocals.update(locals)
-        if not eval(str(assertion), globals(), assertionLocals):
+        if not eval(str(assertion), globals, assertionLocals):
             return tag
     except Exception, e:
         return "%s - %s" % (tag, e)
 
 
-def checkAssertions(instance, assertions, locals):
+def checkAssertions(instance, assertions, globals, locals):
     for tag, assertion in assertions.iteritems():
-        error = checkAssertion(instance, tag, assertion, locals)
+        error = checkAssertion(instance, tag, assertion, globals, locals)
         if error:
             return error
 
 
 def checkInvariant(instance, cls):
     for c in inspect.getmro(cls)[1::-1]:
-        error = checkAssertions(instance, c._invariants_, {})
+        error = checkAssertions(instance, c._invariants_, inspect.getmodule(c).__dict__, {})
         if error:
             raise ContractException(error)
 
@@ -51,7 +53,7 @@ def checkPrecondition(instance, name, locals):
         if hasattr(cls, name):
             c_feature = getattr(cls, name)
             if hasattr(c_feature, "_preconditions"):
-                error = checkAssertions(instance, c_feature._preconditions, locals)
+                error = checkAssertions(instance, c_feature._preconditions, inspect.getmodule(cls).__dict__, locals)
                 if error:
                     return error
 
@@ -65,7 +67,7 @@ def checkPostcondition(instance, name, locals):
         if hasattr(cls, name):
             c_feature = getattr(cls, name)
             if hasattr(c_feature, "_postconditions"):
-                error = checkAssertions(instance, c_feature._postconditions, locals)
+                error = checkAssertions(instance, c_feature._postconditions, inspect.getmodule(cls).__dict__, locals)
                 if error:
                     raise ContractException(error)
 
@@ -128,6 +130,7 @@ def invariant(*args, **kwargs):
                 checkInvariant(result, cls)
                 return result
         deco.__name__ = clazz.__name__
+        deco.__module__ = clazz.__module__
         if not hasattr(clazz, "_invariants_"):
             clazz._invariants_ = {}
         clazz._invariants_.update(dict(zip([str(x) for x in args], args)))
