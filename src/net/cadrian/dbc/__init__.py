@@ -62,14 +62,50 @@ def checkPrecondition(instance, name, locals):
         raise ContractException("\n".join(checks))
 
 
-def checkPostcondition(instance, name, locals):
+def globalsAndOld(globals, old):
+    result = {"old": old}
+    result.update(globals)
+    return result
+
+
+def checkPostcondition(instance, name, locals, oldValues):
+    def old():
+        return oldValues.pop(0)
+
     for cls in inspect.getmro(instance.__class__)[1::-1]:
         if hasattr(cls, name):
             c_feature = getattr(cls, name)
             if hasattr(c_feature, "_postconditions"):
-                error = checkAssertions(instance, c_feature._postconditions, inspect.getmodule(cls).__dict__, locals)
+                error = checkAssertions(instance, c_feature._postconditions, globalsAndOld(inspect.getmodule(cls).__dict__, old), locals)
                 if error:
                     raise ContractException(error)
+
+
+def gatherPostconditionValue(result, instance, assertion, globals, locals):
+    if callable(assertion):
+        assertion(instance)
+    else:
+        assertionLocals = {"self": instance}
+        assertionLocals.update(locals)
+        eval(str(assertion), globals, assertionLocals)
+
+
+def gatherPostconditionValues(result, instance, assertions, globals, locals):
+    for tag, assertion in assertions.iteritems():
+        gatherPostconditionValue(result, instance, assertion, globals, locals)
+
+
+def gatherOldValues(instance, name, locals):
+    result = []
+    def old(value):
+        result.append(value)
+
+    for cls in inspect.getmro(instance.__class__)[1::-1]:
+        if hasattr(cls, name):
+            c_feature = getattr(cls, name)
+            if hasattr(c_feature, "_postconditions"):
+                gatherPostconditionValues(result, instance, c_feature._postconditions, globalsAndOld(inspect.getmodule(cls).__dict__, old), locals)
+    return result
 
 
 def match(spec, instance, *a, **kw):
@@ -112,6 +148,7 @@ class ContractObject(object):
         def dbc(*a, **kw):
             checkInvariant(self, self.__class__)
             checkPrecondition(self, name, match(spec, self, *a, **kw))
+            oldValues = gatherOldValues(self, name, match(spec, self, *a, **kw))
             result = feature(*a, **kw)
             kw["result"] = result
             checkPostcondition(self, name, match(spec, self, *a, **kw))

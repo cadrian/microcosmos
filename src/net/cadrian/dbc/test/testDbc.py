@@ -49,6 +49,10 @@ class B(A):
     def getx(self):
         return self.x
 
+    @ensure("self.x = old(self.x) + 1")
+    def incx(self):
+        self.x = self.x + 1
+
 class C(B):
     def __init__(self, x=1, y=1, z=0):
         B.__init__(self, x)
