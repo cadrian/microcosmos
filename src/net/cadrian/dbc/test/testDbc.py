@@ -36,7 +36,7 @@ class B(A):
         self.x = x
         self.z = 0
 
-    @require("x > 0")
+    @require(positive="x > 0")
     @ensure("self.x == x")
     def setx(self, x):
         self.x = x
@@ -45,7 +45,7 @@ class B(A):
     def setz(self, z):
         pass
 
-    @ensure("result == self.x")
+    @ensure(definition="result == self.x")
     def getx(self):
         return self.x
 

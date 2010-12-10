@@ -18,23 +18,23 @@ import inspect
 class ContractException(Exception): pass
 
 
-def checkAssertion(instance, assertion, locals):
+def checkAssertion(instance, tag, assertion, locals):
     if callable(assertion):
         if assertion(instance):
             return None
-        return assertion.__name__
+        return tag
     try:
         assertionLocals = {"self": instance}
         assertionLocals.update(locals)
         if not eval(str(assertion), globals(), assertionLocals):
-            return str(assertion)
+            return tag
     except Exception, e:
-        return "%s - %s" % (assertion, e)
+        return "%s - %s" % (tag, e)
 
 
 def checkAssertions(instance, assertions, locals):
-    for assertion in assertions:
-        error = checkAssertion(instance, assertion, locals)
+    for tag, assertion in assertions.iteritems():
+        error = checkAssertion(instance, tag, assertion, locals)
         if error:
             return error
 
@@ -95,7 +95,7 @@ class ContractObject(object):
     def __new__(cls, *a, **kw):
         for c in inspect.getmro(cls)[:-1]:
             if not hasattr(c, "_invariants_"):
-                c._invariants_ = []
+                c._invariants_ = {}
         result = object.__new__(cls)
         result.__init__(*a, **kw)
         checkInvariant(result, cls)
@@ -120,32 +120,37 @@ class ContractObject(object):
         return dbc
 
 
-def invariant(*args):
+def invariant(*args, **kwargs):
     def dec(clazz):
         class deco(clazz):
             def __new__(cls, *a, **kw):
                 result = clazz.__new__(cls, *a, **kw)
-                map(cls._invariants_.append, args)
                 checkInvariant(result, cls)
                 return result
         deco.__name__ = clazz.__name__
+        if not hasattr(clazz, "_invariants_"):
+            clazz._invariants_ = {}
+        clazz._invariants_.update(dict(zip([str(x) for x in args], args)))
+        clazz._invariants_.update(kwargs)
         return deco
     return dec
 
 
-def require(*args):
+def require(*args, **kwargs):
     def dec(feature):
         if not hasattr(feature, "_preconditions"):
-            feature._preconditions = []
-        feature._preconditions.extend(args)
+            feature._preconditions = {}
+        feature._preconditions.update(dict(zip([str(x) for x in args], args)))
+        feature._preconditions.update(kwargs)
         return feature
     return dec
 
 
-def ensure(*args):
+def ensure(*args, **kwargs):
     def dec(feature):
         if not hasattr(feature, "_postconditions"):
-            feature._postconditions = []
-        feature._postconditions.extend(args)
+            feature._postconditions = {}
+        feature._postconditions.update(dict(zip([str(x) for x in args], args)))
+        feature._postconditions.update(kwargs)
         return feature
     return dec
