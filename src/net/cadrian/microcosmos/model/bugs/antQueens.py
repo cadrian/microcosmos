@@ -19,9 +19,12 @@ Ant queens: technically speaking, they are "ant factories". They breed new ants.
 
 import random
 
+from net.cadrian.dbc import ensure
+
 from net.cadrian.microcosmos.model.grid import LocatedObject
 from net.cadrian.microcosmos.model.bugs.ant import AbstractAnt
 from net.cadrian.microcosmos.model.bugs.pheromones import PheromoneKind, Pheromone
+
 
 QUEEN_PHEROMONE_KIND = PheromoneKind(0.25, "queen")
 
@@ -52,6 +55,7 @@ class AntQueen(AbstractAnt):
     def isDead(self):
         return self._life == 0
 
+    @ensure("old(self._life) > self._life")
     def prepareToMove(self):
         self._life = self._life - 1
         if self._life > 0:

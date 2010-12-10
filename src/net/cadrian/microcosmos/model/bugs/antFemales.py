@@ -18,14 +18,18 @@ Female ants: fly away from the ant hill to an assigned target; then
 become a queen if they end up on good soil (or grass).
 """
 
+from net.cadrian.dbc import invariant, ensure
+
 from net.cadrian.microcosmos.model.grid import LocatedObject
 from net.cadrian.microcosmos.model.bugs.ant import AbstractAnt
 from net.cadrian.microcosmos.model.bugs.antStates import Dead, Exploration, FollowingScent, FoundTarget
 from net.cadrian.microcosmos.model.bugs.pheromones import PheromoneKind, Pheromone
 
+
 TARGET_PHEROMONE_KIND = PheromoneKind(0.125, "target")
 
 
+@invariant("self.pheromone.kind == TARGET_PHEROMONE_KIND")
 class Target(LocatedObject):
     def __init__(self, grid, sprite):
         LocatedObject.__init__(self, grid, sprite)
@@ -47,6 +51,7 @@ class AntFemale(AbstractAnt):
     def canFly(self):
         return True
 
+    @ensure(valid_state="self.state is not None")
     def prepareToMove(self):
         self._life = self._life - 1
         if self._life <= 0:
