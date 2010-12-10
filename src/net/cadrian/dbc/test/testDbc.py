@@ -49,7 +49,7 @@ class B(A):
     def getx(self):
         return self.x
 
-    @ensure("self.x = old(self.x) + 1")
+    @ensure("self.x = old(self.x)")
     def incx(self):
         self.x = self.x + 1
 
@@ -114,6 +114,11 @@ class InvariantTestCase(unittest.TestCase):
         """ test result """
         a = B(2)
         self.assertEquals(2, a.getx())
+
+    def test07(self):
+        """ test old() syntax """
+        a = B(1)
+        self.failUnlessRaises(ContractException, a.incx)
 
 
 
