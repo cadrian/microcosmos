@@ -45,6 +45,10 @@ class B(A):
     def setz(self, z):
         pass
 
+    @ensure("result == self.x")
+    def getx(self):
+        return self.x
+
 class C(B):
     def __init__(self, x=1, y=1, z=0):
         B.__init__(self, x)
@@ -101,6 +105,11 @@ class InvariantTestCase(unittest.TestCase):
     def test05b(self):
         """ C has a bug in the setz method (inherited contract) """
         self.failUnlessRaises(ContractException, C, 1, z=0)
+
+    def test06(self):
+        """ test result """
+        a = B(2)
+        self.assertEquals(2, a.getx())
 
 
 

@@ -73,12 +73,12 @@ def checkPostcondition(instance, name, locals):
 def match(spec, instance, *a, **kw):
     values = []
     n = len(spec.args)
-    if spec.args[0] == 'self':
+    if n > 0 and spec.args[0] == 'self':
         values.append(instance)
-        n = n-1
+        n = n - 1
 
     values.extend(a)
-    n = n-len(a)
+    n = n - len(a)
 
     if spec.defaults is None:
         values.extend([None] * n)
@@ -111,6 +111,7 @@ class ContractObject(object):
             checkInvariant(self, self.__class__)
             checkPrecondition(self, name, match(spec, self, *a, **kw))
             result = feature(*a, **kw)
+            kw["result"] = result
             checkPostcondition(self, name, match(spec, self, *a, **kw))
             checkInvariant(self, self.__class__)
             return result
