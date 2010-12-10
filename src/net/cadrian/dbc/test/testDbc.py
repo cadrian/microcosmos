@@ -34,14 +34,31 @@ class A(ContractObject):
 class B(A):
     def __init__(self, x=1):
         self.x = x
+        self.z = 0
 
     @require("x > 0")
     @ensure("self.x == x")
-    def setx(self, x, y=0):
+    def setx(self, x):
         self.x = x
 
-class InvariantTestCase(unittest.TestCase):
+    @ensure("self.z == z")
+    def setz(self, z):
+        pass
 
+class C(B):
+    def __init__(self, x=1, y=1, z=0):
+        B.__init__(self, x)
+        self.sety(y)
+        self.setz(z)
+
+    @ensure("self.y == y")
+    def sety(self, y):
+        self.y = 1
+
+    def setz(self, z):
+        self.z = z + 1
+
+class InvariantTestCase(unittest.TestCase):
     def test01(self):
         """ class invariant """
         a = A()
@@ -76,6 +93,14 @@ class InvariantTestCase(unittest.TestCase):
         a = B(2)
         self.assertEquals(2, a.x)
         self.failUnlessRaises(ContractException, a.setx, -1)
+
+    def test05a(self):
+        """ C has a bug in the sety method """
+        self.failUnlessRaises(ContractException, C, 1, 0)
+
+    def test05b(self):
+        """ C has a bug in the setz method (inherited contract) """
+        self.failUnlessRaises(ContractException, C, 1, z=0)
 
 
 

@@ -122,12 +122,12 @@ class ContractObject(object):
 def invariant(*args):
     def dec(clazz):
         class deco(clazz):
-            def __new__(cls, *a):
-                result = clazz.__new__(cls, *a)
+            def __new__(cls, *a, **kw):
+                result = clazz.__new__(cls, *a, **kw)
                 map(cls._invariants_.append, args)
                 checkInvariant(result, cls)
                 return result
-        deco.__name__ = clazz.__name__ + "(dbc)"
+        deco.__name__ = clazz.__name__
         return deco
     return dec
 
