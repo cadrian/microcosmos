@@ -82,12 +82,15 @@ def checkPostcondition(instance, name, locals, oldValues):
 
 
 def gatherPostconditionValue(result, instance, assertion, globals, locals):
-    if callable(assertion):
-        assertion(instance)
-    else:
-        assertionLocals = {"self": instance}
-        assertionLocals.update(locals)
-        eval(str(assertion), globals, assertionLocals)
+    try:
+        if callable(assertion):
+            assertion(instance)
+        else:
+            assertionLocals = {"self": instance}
+            assertionLocals.update(locals)
+            eval(str(assertion), globals, assertionLocals)
+    except:
+        pass
 
 
 def gatherPostconditionValues(result, instance, assertions, globals, locals):
@@ -151,7 +154,7 @@ class ContractObject(object):
             oldValues = gatherOldValues(self, name, match(spec, self, *a, **kw))
             result = feature(*a, **kw)
             kw["result"] = result
-            checkPostcondition(self, name, match(spec, self, *a, **kw))
+            checkPostcondition(self, name, match(spec, self, *a, **kw), oldValues)
             checkInvariant(self, self.__class__)
             return result
 
