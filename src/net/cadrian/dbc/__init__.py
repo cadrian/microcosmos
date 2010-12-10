@@ -69,7 +69,7 @@ def globalsAndOld(globals, old):
 
 
 def checkPostcondition(instance, name, locals, oldValues):
-    def old():
+    def old(*a, **kw):
         return oldValues.pop(0)
 
     for cls in inspect.getmro(instance.__class__)[1::-1]:
